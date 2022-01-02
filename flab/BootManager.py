@@ -4,7 +4,7 @@
 #Distributed under GNU GPL v3
 #Author: Nicholas Jose
 
-from flab import Flab
+import Flab
 from multiprocessing import Process
 from multiprocessing.managers import BaseManager, NamespaceProxy, SyncManager
 import types

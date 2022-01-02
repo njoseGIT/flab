@@ -4,7 +4,7 @@
 #Distributed under GNU GPL v3
 #Author: Nicholas Jose
 
-from flab import TaskManager, UiManager, DeviceManager
+import TaskManager, UiManager, DeviceManager
 import time
 
 class Flab(DeviceManager.DeviceManager, TaskManager.TaskManager, UiManager.UiManager):
