@@ -1,17 +1,18 @@
 #Flab
-#Version 0.0.4
+#Version 0.0.6
 #Published 1-January-2021
 #Distributed under GNU GPL v3
 #Author: Nicholas Jose
 
 from flab import TaskManager, UiManager, DeviceManager
 import time
+import os
 
 class Flab(DeviceManager.DeviceManager, TaskManager.TaskManager, UiManager.UiManager):
     #Flab inherits methods from DeviceManager, TaskManager and UiManager libraries
 
     description = 'The Flab space for shared devices, tasks and user interfaces (UIs)'
-    version = '0.0.4'
+    version = '0.0.6'
     devices = {} #device dictionary
     tasks = {}  #task dictionary
     vars = {} #variable dictionary
@@ -92,4 +93,26 @@ class Flab(DeviceManager.DeviceManager, TaskManager.TaskManager, UiManager.UiMan
     def close_queues(self):
         self.ui_queue.close()
         self.flab_queue.close()
+
+    #creates a project directory with a given name at a given parent path
+    def create_project_directory(self, parent_path, project_name):
+
+        project_dir = parent_path + '/' + project_name
+        device_dir = project_dir + '/' + 'Devices'
+        ui_dir = project_dir + '/' + 'UIs'
+
+        os.mkdir(project_dir)
+
+        def add_directory(parent_path, name):
+            os.mkdir(parent_path + '/' + name)
+
+        add_directory(project_dir, 'Boot')
+        add_directory(project_dir, 'Devices')
+        add_directory(device_dir, 'Drivers')
+        add_directory(device_dir, 'Protocols')
+        add_directory(project_dir, 'Tasks')
+        add_directory(project_dir, 'UIs')
+        add_directory(ui_dir, 'Actions')
+        add_directory(ui_dir, 'Designs')
+
 
