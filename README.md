@@ -1,7 +1,7 @@
 # FLab
 
 Author: Nicholas A. Jose
-Version: 0.0.4
+Version: 0.0.6
 
 ## Summary
 
@@ -62,7 +62,7 @@ A project directory has the following structure:
     
     │  └ Designs/
 
-A project directory may be automatically created using BootManager's create_project_directory() method
+A project directory may be automatically created using flab's create_project_directory() method
 
 ## Flab
 
