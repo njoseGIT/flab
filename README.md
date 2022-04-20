@@ -1,7 +1,13 @@
 # FLab
 
 Author: Nicholas A. Jose
-Version: 0.0.6
+Version: 1.1.1
+
+## Recent Updates
+1.0.0: Device objects have publicly accessible attributes and methods.
+1.0.7: Resolution of bug in booting. Boot script no longer requires changing of directories.
+1.1.0: Resolved issues in closing flab and multiprocessing. Requires Python 3.9 or later
+1.1.1: Resolved issue in listing tasks
 
 ## Summary
 
@@ -25,6 +31,16 @@ FLab abstracts an experimental project into its main components:
 This package provides methods for the management of a shared object space (the Flab class), parallel/synchronised tasks 
 (the TaskManager class), configuring shared devices (the DeviceManager class), and interfaces (the UiManager class).
 This package also includes methods for running a given project (BootManager)
+
+## Installation
+
+To install flab, enter into the terminal
+
+    python3 -m pip install flab
+
+The dependency PyQt5 must also be installed, using
+
+    python3 -m pip install PyQt5
 
 ## Directory structure
 Before beginning any project with FLab, the working directory must be set up properly.
@@ -50,13 +66,13 @@ A project directory has the following structure:
     
     ├ Tasks/
 
-    ├ - Devices/
+    ├ Devices/
     
     │  ├ Drivers/ 
     
     │  └ Protocols/
     
-    ├ - UIs/
+    ├ UIs/
     
     │  ├ Actions/ 
     
@@ -86,7 +102,7 @@ Tasks are essentially routines or programs, which can be run in a variety of fas
 are saved as python files with the Tasks folder of a project.
 
 Tasks must be first loaded into flab with the load_task(task_name) method. They may then be started or stopped using the 
-start_task(task_name, *args, **kwargs) and stop_task(task_name, *args, **kwargs) methods. 
+start_task(task_name, *args, **kwargs) and stop_task(task_name, *args, **kwargs) methods.
 
 Example usage:
 
@@ -96,7 +112,8 @@ Example usage:
 
 Multiple tasks can be loaded simulataneously with the flab.load_tasks method. All the tasks in a given project can be loaded 
 using flab.load_all_tasks(). Tasks can also be dynamically reloaded by using the reload_task and reload_tasks 
-methods. All tasks may be stopped in one line with the command "flab.stop_all_tasks()"
+methods. All tasks may be stopped in one line with the command "flab.stop_all_tasks()". Task objects do not have publicly accessible
+attributes.
 
 Each task requires three attributes:
 1. task_name: a string that matches the filename
@@ -345,6 +362,7 @@ Device class files are saved in the Devices folder of a given project.
 A Device class has two key requirements:
 1. device_name: a string matching the filename
 2. an __ init __ method that does not take any input arguments
+3. the method set_flab() which passes a flab object/reference to a device
 
 Example: DeviceTemplate
 
@@ -357,6 +375,24 @@ Example: DeviceTemplate
 
     def __init__(self):
         pass
+
+    def get(self, attr_str):
+        return self.__getattribute__(attr_str)
+
+    def set(self, attr_str, value):
+        self.__setattr(attr_str, value)
+
+    def get_device_name(self):
+        return self.device_name
+
+    def set_device_name(self, s):
+        self.device_name = s
+
+    def get_flab(self):
+        return self.flab
+
+    def set_flab(self, flab):
+        self.flab = flab
 
     def hello_world(self)
         print('Hello World')
@@ -995,14 +1031,18 @@ create the shared flab object, using namespaces and queues.
 Every flab object must be initialized with queues, which are used to exchange information between separate "flab" process and "ui"
 processes. These queues may or may not further used by the programmer, depending on the complexity of the program.
 
+The flab queue stores commands for processes that execute actions within the flab environment (e.g. controlling devices).
+The UI queue stores commands or strings for UI processes to execute or display
+
 Before starting any specific code for your project, use the following steps to create a shared flab object
 
-1. Shift the working directory up to the project directory. 
-2. Create a Bootmanager
-3. Create a UI queue and a flab queue
-4. Create a shared flab object using boot_manager.create_flab_proxy(ui_queue, flab_queue)
+1. Create a BootManager object
+2. Create a UI queue and a flab queue
+3. Create a shared flab object using boot_manager.create_flab_proxy(ui_queue, flab_queue)
 
 These steps are illustrated in the below example, which starts HelloWorldUI
+
+Note: in V1.0.7+ the working directory does not need to be changed within the bootscript
 
 Example: HelloWorldBoot
 
@@ -1011,19 +1051,14 @@ Example: HelloWorldBoot
     
     if __name__ == '__main__':
 
-        #1. Change the working directory
-        cwd = os.getcwd()
-        if 'Boot' in cwd:
-            os.chdir('..')
-
-        #2. create a boot_manager
+        #1. create a boot_manager
         boot_manager = BootManager.BootManager()
     
-        #3. create the queues
+        #2. create the queues
         ui_queue = boot_manager.create_queue()
         flab_queue = boot_manager.create_queue()
     
-        #4. create a flab object proxy
+        #3. create a flab object proxy
         f = boot_manager.create_flab_proxy(ui_queue, flab_queue)
     
         #convert and run HelloWorldUI
@@ -1037,7 +1072,7 @@ to start multiple running processes from the boot script. This is illustrated in
 ## The Console Project
 
 The Console Project is essentially a user input console that allows you to access the flab object and run tasks in real time.
-This is extremeley useful for quickly prototyping code, as you do not need to restart python each time you need to modify a task.
+This is extremely useful for quickly prototyping code, as you do not need to restart python each time you need to modify a task.
 Instead, you can simply change a task, save the file, "reload" the task in flab, and start it.
 
 The Console takes only flab commands as inputs. For example
