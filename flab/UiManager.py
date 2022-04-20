@@ -1,8 +1,8 @@
 #UiManager
-#Version 0.0.4
-#Published 1-January-2021
+#Version 1.1.1
+#Published 11-April-2022
 #Distributed under GNU GPL v3
-#Author: Nicholas Jose
+#Author: Nicholas A. Jose
 
 from PyQt5 import uic
 import importlib
@@ -15,7 +15,7 @@ class UiManager():
 
     description = 'Methods for converting and loading user interfaces. Note: PyQT interfaces generally need to be ' \
                   'be started within a main method or separate process'
-    version = '0.0.4'
+    version = '1.1.1'
     uis = {}
 
     def __init__(self):

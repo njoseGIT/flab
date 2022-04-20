@@ -1,29 +1,54 @@
 #BootManager
-#Version 0.0.5
-#Published 1-January-2021
+#Version 1.1.1
+#Published 11-April-2022
 #Distributed under GNU GPL v3
-#Author: Nicholas Jose
+#Author: Nicholas A. Jose
 
 from flab import Flab
 from multiprocessing import Process
 from multiprocessing.managers import NamespaceProxy, SyncManager
 import types
+import sys
 import os
 
 #A class for managing the booting of flab, specifically using the multiprocessing library
 class BootManager():
 
-    version = '0.0.5'
+    version = '1.1.0'
     processes = {}
     managers = {}
 
     #create the basic flab manager, queue manager and shared flab and queue
     def __init__(self):
-        FlabManager.register('Flab', Flab.Flab, FlabProxy)
-        self.flab_manager = FlabManager()
-        self.queue_manager = SyncManager()
-        self.flab_manager.start()
-        self.queue_manager.start()
+        try:
+            self.setup_boot_directories()
+            FlabManager.register('Flab', Flab.Flab, FlabProxy)
+            self.flab_manager = FlabManager()
+            self.queue_manager = SyncManager()
+            self.flab_manager.start()
+            self.queue_manager.start()
+        except Exception as e:
+            print('Error in creating boot manager')
+            print(e)
+        finally:
+            pass
+
+    #set up boot directories
+    def setup_boot_directories(self):
+        try:
+            if 'Boot' in os.getcwd():
+                os.chdir('..')
+                cwd = os.getcwd()
+                par1 = os.path.abspath(os.path.join(cwd, '..'))
+                par2 = os.path.abspath(os.path.join(par1, '..'))
+                sys.path.append(par2)
+            else:
+                print('Warning: Current working directory during BootManager is not boot directory')
+        except Exception as e:
+            print('Error in setting up project directory')
+            print(e)
+        finally:
+            pass
 
     def create_queue(self):
         return self.queue_manager.Queue()
@@ -34,6 +59,7 @@ class BootManager():
         flab_proxy.devices = self.flab_manager.dict()  # device dictionary
         flab_proxy.vars = self.flab_manager.dict()  # variable dictionary
         flab_proxy.uis = self.flab_manager.dict()  # GUI dictionary
+        #flab_proxy.running_tasks = self.flab_manager.dict()
         return flab_proxy
 
     def start_process(self, flab, task_name, *args, blocking=False):
@@ -65,7 +91,6 @@ class BootManager():
         self.flab_manager.shutdown()
 
 #A proxy class for sharing flab
-
 class FlabProxy(NamespaceProxy):
     _exposed_ = tuple(dir(Flab.Flab))
 
@@ -77,7 +102,6 @@ class FlabProxy(NamespaceProxy):
             return wrapper
         return result
 
-
+#A manager for sharing flab
 class FlabManager(SyncManager):
     pass
-

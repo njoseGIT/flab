@@ -1,18 +1,19 @@
 #Flab
-#Version 0.0.6
-#Published 1-January-2021
+#Version 1.1.1
+#Published 11-April-2022
 #Distributed under GNU GPL v3
-#Author: Nicholas Jose
+#Author: Nicholas A. Jose
 
 from flab import TaskManager, UiManager, DeviceManager
 import time
 import os
+import sys
 
 class Flab(DeviceManager.DeviceManager, TaskManager.TaskManager, UiManager.UiManager):
-    #Flab inherits methods from DeviceManager, TaskManager and UiManager libraries
 
+    #Flab inherits methods from DeviceManager, TaskManager and UiManager libraries
     description = 'The Flab space for shared devices, tasks and user interfaces (UIs)'
-    version = '0.0.6'
+    version = '1.1.1'
     devices = {} #device dictionary
     tasks = {}  #task dictionary
     vars = {} #variable dictionary
@@ -66,28 +67,18 @@ class Flab(DeviceManager.DeviceManager, TaskManager.TaskManager, UiManager.UiMan
             #stop all running tasks
             print('stopping running tasks')
             self.stop_all_tasks()
-            time.sleep(5)
-
+            while self.get_running_task_names() != []:
+                time.sleep(1)
             self.is_running = False
-
             print('closing flab process')
             self.flab_queue.put('close')
             print('closing ui process')
             self.ui_queue.put('close')
-
-            #stop all running uis
-            self.display('stopping all uis')
-            self.stop_all_uis()
-
-            #close all queues
-            self.close_queues()
-
-
         except Exception as e:
             self.display('error in closing')
             self.display(e)
         finally:
-            pass
+            return 0
 
     #Closing of queues
     def close_queues(self):
@@ -114,5 +105,18 @@ class Flab(DeviceManager.DeviceManager, TaskManager.TaskManager, UiManager.UiMan
         add_directory(project_dir, 'UIs')
         add_directory(ui_dir, 'Actions')
         add_directory(ui_dir, 'Designs')
+
+    def set_working_directory(self,project_path):
+        try:
+            os.chdir(project_path)
+            cwd = os.getcwd()
+            par1 = os.path.abspath(os.path.join(cwd, '..'))
+            par2 = os.path.abspath(os.path.join(par1, '..'))
+            sys.path.append(par2)
+        except Exception as e:
+            print('Error in setting up project directory')
+            print(e)
+        finally:
+            pass
 
 

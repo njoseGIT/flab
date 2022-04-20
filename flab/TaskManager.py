@@ -1,8 +1,8 @@
 #TaskManager
-#Version 0.0.4
-#Published 1-January-2021
+#Version 1.1.1
+#Published 11-April-2022
 #Distributed under GNU GPL v3
-#Author: Nicholas Jose
+#Author: Nicholas A. Jose
 
 import glob
 import threading
@@ -17,9 +17,10 @@ class TaskManager():
 
     description = 'Methods for loading, running and terminating tasks implementing python\'s threading ' \
                   'library, PyQT\'s QThreading library, asyncio, and multiprocessing'
-    version = '0.0.4'
+    version = '1.1.1'
     tasks = {} #dictionary of loaded tasks
     running_tasks = {} #dictionary of running tasks (i.e. instances of threads)
+    load_all_tasks_completed = False
 
     def __init__(self):
         pass
@@ -27,9 +28,9 @@ class TaskManager():
     #load a single task into flab. The task name is given by the filename, without the '.py' at the end
     def load_task(self,task_name):
         load_err = ''
-        cwf = 'Projects.' + os.path.split(os.getcwd())[1]
         try:
-            mo = importlib.import_module(cwf+'.Tasks.' + task_name)
+            module_name = 'Projects.' + os.path.split(os.getcwd())[1]+'.Tasks.' + task_name
+            mo = importlib.import_module(module_name)
             nt = mo.Task(self)
             #dictionary entry
             mod = {task_name:mo}
@@ -56,12 +57,18 @@ class TaskManager():
 
     #load every task present in the current project's Tasks folder
     def load_all_tasks(self):
-        cwd = os.getcwd()
-        tasks = glob.glob(cwd+'/Tasks/*.py')
-        task_names = []
-        for t in tasks:
-            task_names.append(t[len(cwd+'/Tasks/'):].replace('.py',''))
-        self.load_tasks(sorted(task_names))
+        try:
+            cwd = os.getcwd()
+            tasks = glob.glob(cwd+'/Tasks/*.py')
+            task_names = []
+            for t in tasks:
+                task_names.append(t[len(cwd+'/Tasks/'):].replace('.py',''))
+            self.load_tasks(sorted(task_names))
+        except Exception as e:
+            self.display(e)
+            self.display('Error in loading tasks')
+        finally:
+            self.load_all_tasks_completed = True
 
     #reload a single task into the flab
     def reload_task(self,task_name):
@@ -166,17 +173,26 @@ class TaskManager():
 
     #this method stops all running tasks
     def stop_all_tasks(self):
-        current_tasks = self.running_tasks
-        for t in current_tasks:
-            if t.__contains__('RUN_'):
+        try:
+            current_tasks = self.running_tasks
+            temp_tasks =[]
+            for t in current_tasks:
+                if t.__contains__('RUN_'):
+                    temp_tasks.append(t)
+            for t in temp_tasks:
                 tt = t.replace('RUN_','')
                 self.stop_task(tt)
+        except Exception as e:
+            print(e)
+            self.display(e)
+        finally:
+            pass
 
     #start a thread with the run method, with input arguments args and kwargs
     def start_thread(self, task_name, *args, **kwargs):
         try:
             task = self.tasks[task_name]
-            thr = ThreadTrace('run', 'task_name', target=task.run, args=args, kwargs=kwargs, daemon=True)
+            thr = ThreadTrace('run', task_name, self, target=task.run, args=args, kwargs=kwargs, daemon=True)
             thr.start()
             self.running_tasks.update({'RUN_' + task_name: thr})
         except Exception as e:
@@ -189,7 +205,7 @@ class TaskManager():
     def stop_thread(self, task_name, *args, **kwargs):
         try:
             task = self.tasks[task_name]
-            thr = ThreadTrace('stop', task_name, target=task.stop, args=args, kwargs=kwargs, daemon=True)
+            thr = ThreadTrace('stop', task_name, self, target=task.stop, args=args, kwargs=kwargs, daemon=True)
             thr.start()
             self.running_tasks.update({'STOP_' + task_name: thr})
             self.kill_thread('RUN_' + task_name)
@@ -218,11 +234,19 @@ class TaskManager():
             finally:
                 pass
 
+    #returns task instances
+    def get_running_task_names(self):
+        running_task_names = []
+        for i in self.running_tasks:
+            if self.running_tasks[i].is_alive() is True:
+                running_task_names.append(i)
+        return running_task_names
+
     #start a process with the run method,  with input arguments args and kwargs
     def start_process(self, task_name, *args, blocking=False):
         try:
             process_class = self.tasks[task_name]
-            process = Process(target=process_class.run, args=args)
+            process = Process(target=process_class.run, args=args, daemon=True)
             process.start()
             self.running_tasks.update({'RUN_' + task_name: process})
             if blocking:
@@ -245,6 +269,8 @@ class TaskManager():
                 procs.update({'RUN_' + t: process})
                 self.running_tasks.update({'RUN_' + t: process})
                 index = index + 1
+            for p in procs:
+                procs[p].join()
             if blocking:
                 for p in procs:
                     procs[p].join()
@@ -254,18 +280,18 @@ class TaskManager():
         finally:
             pass
 
-    #stop a process by calling the task stop method and then terminating the running task
+    #stop a process by terminating the running task, then calling the stop method of the process as another process.
     def stop_process(self, task_name, *args, blocking=True):
         try:
+            running_task_name = 'RUN_' + task_name
+            if running_task_name in self.get_running_task_names():
+                self.running_tasks[running_task_name].terminate()
             process_class = self.tasks[task_name]
-            process = Process(target=process_class.stop, args=args)
+            process = Process(target=process_class.stop, args=args, daemon=True)
             process.start()
             self.running_tasks.update({'STOP_' + task_name: process})
             if blocking:
                 process.join()
-            running_task = 'RUN_' + task_name
-            if running_task in self.running_tasks:
-                self.running_tasks['RUN_' + task_name].terminate()
         except Exception as e:
             self.display('Error in stopping process ' + task_name)
             self.display(e)
@@ -282,7 +308,7 @@ class TaskManager():
                     t = asyncio.create_task(task.run())
                     await t
                 asyncio.run(main())
-            thr = ThreadTrace('run', 'task_name', target=asyn_task, args=args, kwargs=kwargs, daemon=True)
+            thr = ThreadTrace('run', task_name, self, target=asyn_task, args=args, kwargs=kwargs, daemon=True)
             thr.start()
             self.running_tasks.update({'RUN_ATask_' + task_name: thr})
         except Exception as e:
@@ -306,7 +332,7 @@ class TaskManager():
                     for t in asyncio_tasks:
                         await t
                 asyncio.run(main())
-            thr = ThreadTrace('run', 'task_name', target=asyn_task, args=args, kwargs=kwargs, daemon=True)
+            thr = ThreadTrace('run', task_names, self, target=asyn_task, args=args, kwargs=kwargs, daemon=True)
             thr.start()
             self.running_tasks.update({'RUN_ATask_' + tot_task_name: thr})
         except Exception as e:
@@ -324,7 +350,7 @@ class TaskManager():
                     t = asyncio.create_task(task.stop())
                     await t
                 asyncio.run(main())
-            thr = ThreadTrace('run', 'task_name', target=asyn_task, args=args, kwargs=kwargs, daemon=True)
+            thr = ThreadTrace('run', task_name, self, target=asyn_task, args=args, kwargs=kwargs, daemon=True)
             thr.start()
             self.running_tasks.update({'STOP_ATask_' + task_name: thr})
             self.running_tasks['RUN_ATask_'+task_name].kill()
@@ -346,7 +372,7 @@ class TaskManager():
                         t = asyncio.create_task(task.stop())
                         await t
                     asyncio.run(main())
-                thr = ThreadTrace('run', 'task_name', target=asyn_task, args=args, kwargs=kwargs, daemon=True)
+                thr = ThreadTrace('run', task_name, self, target=asyn_task, args=args, kwargs=kwargs, daemon=True)
                 thr.start()
                 self.running_tasks.update({'STOP_ATask_' + task_name: thr})
             self.running_tasks['RUN_ATask_'+tot_task_name].kill()
@@ -400,21 +426,28 @@ class TaskManager():
 #A class for killable threads using traces
 class ThreadTrace(threading.Thread):
 
-    def __init__(self, task_method, task_name, *args, **kwargs):
+    def __init__(self, task_method, task_name, flab, *args, **kwargs):
         self.task_method = task_method
         self.task_name = task_name
+        self.flab = flab
         threading.Thread.__init__(self, *args, **kwargs)
         self.killed = False
 
     def start(self):
-        self.__run_backup = self.run
-        self.run = self.__run
-        threading.Thread.start(self)
+        try:
+            self.__run_backup = self.run
+            self.run = self.__run
+            threading.Thread.start(self)
+        except Exception as e:
+            self.flab.display(e)
 
     def __run(self):
-        sys.settrace(self.globaltrace)
-        self.__run_backup()
-        self.run = self.__run_backup
+        try:
+            sys.settrace(self.globaltrace)
+            self.__run_backup()
+            self.run = self.__run_backup
+        except Exception as e:
+            self.flab.display(e)
 
     def globaltrace(self, frame, event, arg):
         if event == 'call':
