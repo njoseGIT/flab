@@ -1,8 +1,9 @@
+#Flab
 #DeviceManager
-#Version 1.1.1
-#Published 11-April-2022
+#Version 2.0.1
+#Published 17-Jul-2022
 #Distributed under GNU GPL v3
-#Author: Nicholas A. Jose
+#Author: Nicholas Jose
 
 import importlib
 import os
@@ -19,7 +20,7 @@ class FlabDeviceManager(SyncManager):
 class DeviceManager():
 
     description = 'Actions for loading and reloading device libraries into flab'
-    version = '1.1.0'
+    version = '2.0.1'
     devices = {}
     flab_device_manager = FlabDeviceManager()
     load_all_devices_completed = False
@@ -55,6 +56,7 @@ class DeviceManager():
         for d in devices:
             device_names.append(d[len(cwd+'/Devices/'):].replace('.py',''))
         self.register_devices(sorted(device_names))
+
 
     #star the flab device manager
     def start_device_manager(self):
@@ -121,6 +123,18 @@ class DeviceManager():
             self.display(e)
         finally:
             pass
+
+    def get_devices(self):
+        devices = {}
+        keys = self.devices.keys()
+        try:
+            if len(keys) > 0:
+                for i in keys:
+                    devices[i] = self.devices[i].get_obj()
+        except Exception as e:
+            self.display('error in retrieving devices from flab')
+            self.display(e)
+        return devices
 
 #A proxy class for sharing devices
 def Proxy(target):

@@ -1,12 +1,13 @@
+#Flab
 #BootManager
-#Version 1.1.1
-#Published 11-April-2022
+#Version 2.0.1
+#Published 17-Jul-2022
 #Distributed under GNU GPL v3
-#Author: Nicholas A. Jose
+#Author: Nicholas Jose
 
 from flab import Flab
-from multiprocessing import Process
-from multiprocessing.managers import NamespaceProxy, SyncManager
+from multiprocessing import Process, Queue
+from multiprocessing.managers import NamespaceProxy, SyncManager, Namespace
 import types
 import sys
 import os
@@ -14,15 +15,33 @@ import os
 #A class for managing the booting of flab, specifically using the multiprocessing library
 class BootManager():
 
-    version = '1.1.0'
+    version = '2.0.1'
     processes = {}
     managers = {}
 
     #create the basic flab manager, queue manager and shared flab and queue
-    def __init__(self):
+    #need to change server/client
+    def __init__(self, server=False, client=False):
         try:
             self.setup_boot_directories()
             FlabManager.register('Flab', Flab.Flab, FlabProxy)
+            if server:
+                machine_queue = Queue()
+                client_queue = Queue()
+                remote_flab_queue = Queue()
+                remote_flab_namespace = Namespace()
+                remote_flab_namespace.devices = []
+                RemoteManager.register('machine_queue', callable=lambda: machine_queue)
+                RemoteManager.register('client_queue', callable=lambda: client_queue)
+                RemoteManager.register('remote_flab_queue', callable=lambda: remote_flab_queue)
+                RemoteManager.register('remote_flab_namespace', callable=lambda: remote_flab_namespace)
+
+            elif client:
+                RemoteManager.register('machine_queue')
+                RemoteManager.register('client_queue')
+                RemoteManager.register('remote_flab_queue')
+                RemoteManager.register('remote_flab_namespace')
+
             self.flab_manager = FlabManager()
             self.queue_manager = SyncManager()
             self.flab_manager.start()
@@ -33,33 +52,44 @@ class BootManager():
         finally:
             pass
 
-    #set up boot directories
-    def setup_boot_directories(self):
+    #create a remote queue manager and machine/client queues
+    def create_remote_manager(self,address, authkey, server=False):
         try:
-            if 'Boot' in os.getcwd():
-                os.chdir('..')
-                cwd = os.getcwd()
-                par1 = os.path.abspath(os.path.join(cwd, '..'))
-                par2 = os.path.abspath(os.path.join(par1, '..'))
-                sys.path.append(par2)
+            if server:
+                self.remote_manager = RemoteManager(address=address, authkey=authkey)
+                self.server = self.remote_manager.get_server()
+                self.server.serve_forever()
             else:
-                print('Warning: Current working directory during BootManager is not boot directory')
+                self.remote_manager = RemoteManager(address=address, authkey=authkey)
+                self.remote_manager.connect()
         except Exception as e:
-            print('Error in setting up project directory')
             print(e)
+            print('Error in remote connection. Check connection and inputs')
         finally:
             pass
+
+    #set up boot directories
+    def setup_boot_directories(self):
+
+        if 'Boot' in os.getcwd():
+            os.chdir('..')
+            cwd = os.getcwd()
+            par1 = os.path.abspath(os.path.join(cwd, '..'))
+            par2 = os.path.abspath(os.path.join(par1, '..'))
+            sys.path.append(par2)
+        else:
+            print('BootManager object must be created in a script in the boot directory')
 
     def create_queue(self):
         return self.queue_manager.Queue()
 
-    def create_flab_proxy(self, out_queue, in_queue):
-        flab_proxy = self.flab_manager.Flab(out_queue, in_queue) # flab namespace
+    def create_flab_proxy(self, ui_queue=None, flab_queue=None, print_status=True):
+        flab_proxy = self.flab_manager.Flab(ui_queue=ui_queue, flab_queue=flab_queue,
+                                            print_status=print_status)  # flab namespace
         flab_proxy.tasks = self.flab_manager.dict() # tasks dictionary
         flab_proxy.devices = self.flab_manager.dict()  # device dictionary
         flab_proxy.vars = self.flab_manager.dict()  # variable dictionary
         flab_proxy.uis = self.flab_manager.dict()  # GUI dictionary
-        #flab_proxy.running_tasks = self.flab_manager.dict()
         return flab_proxy
 
     def start_process(self, flab, task_name, *args, blocking=False):
@@ -102,6 +132,12 @@ class FlabProxy(NamespaceProxy):
             return wrapper
         return result
 
-#A manager for sharing flab
+#A synchmanager class for sharing flab across local processes
 class FlabManager(SyncManager):
     pass
+
+#A synchmanager class for sharing flab across networks
+class RemoteManager(SyncManager):
+    pass
+
+

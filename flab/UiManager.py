@@ -1,10 +1,10 @@
+#Flab
 #UiManager
-#Version 1.1.1
-#Published 11-April-2022
+#Version 2.0.1
+#Published 17-Jul-2022
 #Distributed under GNU GPL v3
-#Author: Nicholas A. Jose
+#Author: Nicholas Jose
 
-from PyQt5 import uic
 import importlib
 import time
 import os
@@ -15,7 +15,7 @@ class UiManager():
 
     description = 'Methods for converting and loading user interfaces. Note: PyQT interfaces generally need to be ' \
                   'be started within a main method or separate process'
-    version = '1.1.1'
+    version = '2.0.1'
     uis = {}
 
     def __init__(self):
@@ -31,7 +31,8 @@ class UiManager():
             ui_file_path = cwd +'/UIs/Designs/'+ui_file_name+'.ui'
             py_file_path = cwd +'/UIs/Designs/'+ui_file_name+'.py'
             with open(py_file_path,'w') as pyfile:
-                uic.compileUi(ui_file_path,pyfile)
+                pass
+           #uic.compileUi(ui_file_path,pyfile)
             time.sleep(1)
         except Exception as e:
             self.display('Error in .ui to .py file conversion')

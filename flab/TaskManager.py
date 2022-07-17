@@ -1,14 +1,15 @@
+#Flab
 #TaskManager
-#Version 1.1.1
-#Published 11-April-2022
+#Version 2.0.1
+#Published 17-Jul-2022
 #Distributed under GNU GPL v3
-#Author: Nicholas A. Jose
+#Author: Nicholas Jose
+#Update: No longer contains Qthread capabilities to remove dependency on PyQt
 
 import glob
 import threading
 import sys
 import os
-from PyQt5.QtCore import QThread
 import asyncio
 import importlib
 from multiprocessing import Process
@@ -16,8 +17,8 @@ from multiprocessing import Process
 class TaskManager():
 
     description = 'Methods for loading, running and terminating tasks implementing python\'s threading ' \
-                  'library, PyQT\'s QThreading library, asyncio, and multiprocessing'
-    version = '1.1.1'
+                  'library, asyncio, and multiprocessing'
+    version = '2.0.1'
     tasks = {} #dictionary of loaded tasks
     running_tasks = {} #dictionary of running tasks (i.e. instances of threads)
     load_all_tasks_completed = False
@@ -102,15 +103,13 @@ class TaskManager():
         return reload_err
 
     #start a task using the "run" method. By default this runs each task as a thread, but if the task type is specified
-    #otherwise, it will start the task as an asyncio thread, a qthread or a process
+    #otherwise, it will start the task as an asyncio thread or a process
     def start_task(self, task_name, *args, **kwargs):
         try:
             task = self.tasks[task_name]
             if hasattr(task,'task_type'):
                 if task.task_type == 'thread':
                     self.start_thread(task_name, *args, **kwargs)
-                elif task.task_type == 'qtask':
-                    self.start_qtask(task_name, *args, **kwargs)
                 elif task.task_type == 'asyncio':
                     self.start_asyncio_task(task_name, *args, **kwargs)
                 elif task.task_type == 'process':
@@ -148,15 +147,13 @@ class TaskManager():
             pass
 
     #stop a task using the task's "stop" method. By default this runs each task as a thread, but if the task type is specified
-    #otherwise, it will start the task as an asyncio thread, a qthread or a process
+    #otherwise, it will start the task as an asyncio thread or a process
     def stop_task(self, task_name, *args, **kwargs):
         try:
             task = self.tasks[task_name]
             if hasattr(task,'task_type'):
                 if task.task_type == 'thread':
                     self.stop_thread(task_name, *args, **kwargs)
-                elif task.task_type == 'qtask':
-                    self.stop_qtask(task_name, *args, **kwargs)
                 elif task.task_type == 'asyncio':
                     self.stop_asyncio_task(task_name, *args, **kwargs)
                 elif task.task_type == 'process':
@@ -382,37 +379,6 @@ class TaskManager():
         finally:
             pass
 
-    #start a qtask (from pyqt) using the QTaskRun class
-    def start_qtask(self, task_name, *args, **kwargs):
-        try:
-            nta = QTaskRun()
-            nta.setup(self, self.tasks[task_name], *args, **kwargs)
-            self.running_tasks.update({'RUN_QTask_' + task_name: nta})
-            nta.start()
-        except Exception as e:
-            self.display('Error in starting qtask ' + task_name)
-            self.display(e)
-        finally:
-            pass
-
-    #stop a qtask (from pyqt) using the QTaskStop class
-    def stop_qtask(self, task_name, *args, **kwargs):
-        try:
-            self.running_tasks['RUN_QTask_' + task_name].exit()
-        except Exception as e:
-            self.display('Error in killing QTask: ' + task_name)
-            self.display(e)
-        try:
-            nta = QTaskStop()
-            nta.setup(self, self.tasks[task_name], *args, **kwargs)
-            self.running_tasks.update({'STOP_QTask_' + task_name: nta})
-            nta.start()
-        except Exception as e:
-            self.display('Error in stopping QTask: ' + task_name)
-            self.display(e)
-        finally:
-            pass
-
     #a function for passing function commands between different processes easier
     def send_command(self, queue, function_name, *args, **kwargs):
         to_pass = function_name, args, kwargs
@@ -433,6 +399,7 @@ class ThreadTrace(threading.Thread):
         threading.Thread.__init__(self, *args, **kwargs)
         self.killed = False
 
+    #start the thread
     def start(self):
         try:
             self.__run_backup = self.run
@@ -441,6 +408,7 @@ class ThreadTrace(threading.Thread):
         except Exception as e:
             self.flab.display(e)
 
+    #create trace
     def __run(self):
         try:
             sys.settrace(self.globaltrace)
@@ -449,79 +417,20 @@ class ThreadTrace(threading.Thread):
         except Exception as e:
             self.flab.display(e)
 
+    #a global trace
     def globaltrace(self, frame, event, arg):
         if event == 'call':
             return self.localtrace
         else:
             return None
 
+    #a local trace
     def localtrace(self, frame, event, arg):
         if self.killed:
             if event == 'line':
                 raise SystemExit()
         return self.localtrace
 
+    #a flag to kill a thread
     def kill(self):
         self.killed = True
-
-#A class for creating a QThread which uses a given task's run method, and accepts input arguments
-class QTaskRun(QThread):
-
-    def __init__(self,*args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.taskargs = -1
-        self.taskkwargs = -1
-
-    #setup handles cases in which args or kwargs are specified
-    def setup(self,flab,task,*args, **kwargs):
-        self = flab
-        self.task = task
-        self.task_name = task.task_name
-        if len(args) != 0:
-            self.taskargs = args
-        if len(kwargs) != 0:
-            self.taskkwargs = kwargs
-
-    def run(self):
-        try:
-            if self.taskargs != -1 and self.taskkwargs != -1:
-                self.task.run(*self.taskargs,**self.taskkwargs)
-            elif self.taskargs != -1:
-                self.task.run(*self.taskargs)
-            elif self.taskkwargs != -1:
-                self.task.run(**self.taskkwargs)
-            else:
-                self.task.run()
-        except Exception as e:
-            self.display(e)
-
-#A class for creating a QThread which uses a given task's stop method, and accepts input arguments
-class QTaskStop(QThread):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.taskargs = -1
-        self.taskkwargs = -1
-
-    #setup handles cases in which args or kwargs are specified
-    def setup(self,flab,task,*args, **kwargs):
-        self = flab
-        self.task = task
-        self.task_name = task.task_name
-        if len(args) != 0:
-            self.taskargs = args
-        if len(kwargs) != 0:
-            self.taskkwargs = kwargs
-
-    def run(self):
-        try:
-            if self.taskargs != -1 and self.taskkwargs != -1:
-                self.task.stop(*self.taskargs,**self.taskkwargs)
-            elif self.taskargs != -1:
-                self.task.stop(*self.taskargs)
-            elif self.taskkwargs != -1:
-                self.task.stop(**self.taskkwargs)
-            else:
-                self.task.stop()
-        except Exception as e:
-            self.display(e)
