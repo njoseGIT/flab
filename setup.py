@@ -4,8 +4,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="flab-njose",
-    version="0.0.4",
+    name="flab",
+    version="2.0.1",
     author="Nicholas A. Jose",
     author_email="njose40707@gmail.com",
     description='A fast, flexible and fun framework for creating automated laboratories',
@@ -15,5 +15,5 @@ setuptools.setup(
     license='GNU GPL3',
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    python_requires=">=3.6",
+    python_requires=">=3.9",
 )

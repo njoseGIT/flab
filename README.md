@@ -1,21 +1,31 @@
-# FLab
+# flab
 
 Author: Nicholas A. Jose
-Version: 1.1.1
+Version: 2.0.1
 
 ## Recent Updates
 1.0.0: Device objects have publicly accessible attributes and methods.
+
 1.0.7: Resolution of bug in booting. Boot script no longer requires changing of directories.
+
 1.1.0: Resolved issues in closing flab and multiprocessing. Requires Python 3.9 or later
+
 1.1.1: Resolved issue in listing tasks
+
+2.0.0: BootManager contains functionality for network communication. Flab objects are now initialized with queues as 
+optional arguments. TaskManager no longer implements QThread (as a "QTask") such that
+flab is no longer dependent on PyQT. Templates are now included within flab.Templates. These are DeviceTemplate, DriverTemplate
+and ProtocolTemplate, which may be inherited by Device classes.
+
+2.0.1: Resolved bug in distribution
 
 ## Summary
 
-FLab was created to be a fast, flexible and fun framework for creating automated chemical laboratories. As a coding
+Flab was created to be a fast, flexible and fun framework for creating automated chemical laboratories. As a coding
 framework, rather than defining specific sequence of automated actions, FLab aims to make the task of creating automated 
 systems significantly simpler. 
 
-FLab achieves its flexibility via the following principles:
+Flab achieves its flexibility via the following principles:
 
 1. Modularity via inheritance
 2. Parallelization via threaded, asynchronous and multiprocess computing
@@ -23,7 +33,7 @@ FLab achieves its flexibility via the following principles:
 4. Intuitive via minimalist and physically relevant ontologies
 5. Accessible via open-source distribution (currently under GNU GPL v3)
 
-FLab abstracts an experimental project into its main components: 
+Flab abstracts an experimental project into its main components: 
 1. physical devices (the Device class)
 2. actions (the Task class)
 3. user interfaces (the UI class)
@@ -43,7 +53,7 @@ The dependency PyQt5 must also be installed, using
     python3 -m pip install PyQt5
 
 ## Directory structure
-Before beginning any project with FLab, the working directory must be set up properly.
+Before beginning any project with Flab, the working directory must be set up properly.
 The working directory has the following structure. All projects are stored in the "Projects" folder. Any other code 
 (such as a custom flab distribution) or data can also be kept in this working directory.
 
@@ -78,9 +88,12 @@ A project directory has the following structure:
     
     │  └ Designs/
 
+    │  └ Windows/
+
+
 A project directory may be automatically created using flab's create_project_directory() method
 
-## Flab
+## Flab Objects
 
 A Flab object acts as a space for the shared storage of:
 1. devices (in the devices dictionary)
@@ -366,36 +379,66 @@ A Device class has two key requirements:
 
 Example: DeviceTemplate
 
-    from Projects.Examples.Devices.Drivers import DriverTemplate
-    from Projects.Examples.Devices.Protocols import ProtocolTemplate
-
+    from flab.Templates import DriverTemplate
+    from flab.Templates import ProtocolTemplate
+    import inspect
+    
     class Device(DriverTemplate.Driver, ProtocolTemplate.Protocol):
-
-    device_name = 'DeviceTemplate'
-
-    def __init__(self):
-        pass
-
-    def get(self, attr_str):
-        return self.__getattribute__(attr_str)
-
-    def set(self, attr_str, value):
-        self.__setattr(attr_str, value)
-
-    def get_device_name(self):
-        return self.device_name
-
-    def set_device_name(self, s):
-        self.device_name = s
-
-    def get_flab(self):
-        return self.flab
-
-    def set_flab(self, flab):
-        self.flab = flab
-
-    def hello_world(self)
-        print('Hello World')
+    
+        device_name = 'DeviceTemplate'
+        protocol_name = 'ProtocolTemplate'
+        driver_name = 'DriverTemplate'
+        version = '2.0.1'
+    
+        def __init__(self):
+            self.device_name = 'DeviceTemplate'
+            self.protocol_name = 'ProtocolTemplate'
+            self.driver_name = 'DriverTemplate'
+    
+        #returns the value of a Device attribute
+        def get(self, attribute_name):
+            return self.__getattribute__(attribute_name)
+    
+        #sets the value of a Device attribute
+        def set(self, attribute_name, value):
+            self.__setattr__(attribute_name, value)
+    
+        #returns the name of a Device
+        def get_device_name(self):
+            return self.device_name
+    
+        #sets the name of a Device
+        def set_device_name(self, device_name):
+            self.device_name = device_name
+    
+        #returns the flab object of a Device
+        def get_flab(self):
+            return self.flab
+    
+        #sets the flab object of a Device
+        def set_flab(self, flab):
+            self.flab = flab
+    
+        #returns the attributes of a Device in a list
+        def list_attributes(self):
+            variables = []
+            for i in inspect.getmembers(self):
+                if not inspect.ismethod(i[1]) and not inspect.ismethoddescriptor(i[1]) and not inspect.isbuiltin(i[1]) and not '__' in i[0]:
+                    variables.append(i[0])
+            return variables
+    
+        #returns the methods of a Device in a list
+        def list_methods(self):
+            variables = []
+            for i in inspect.getmembers(self):
+                if inspect.ismethod(i[1]) and not inspect.ismethoddescriptor(i[1]) and not inspect.isbuiltin(i[1]) and not '__' in i[0]:
+                    variables.append(i[0])
+            return variables
+    
+        #returns the arguments of a method of a Device in a list
+        def list_method_args(self,method_name):
+            fullargspec = inspect.getfullargspec(self.get(method_name))
+            return fullargspec
 
 The Device class is primarily used for defining any configuration parameters that are specific to given use-case.
 For example, the below Device class for controlling hotplates is used to specify default temperatures
@@ -442,7 +485,6 @@ Example: reloading and using device
     flab.reload_device('ExampleDevice')
     flab.devices['ExampleDevice'].example_function()
 
-
 ###Drivers
 
 Unlike a Task, a Driver has relatively fewer requirements. A Driver must define:
@@ -455,13 +497,30 @@ required to program drivers, which is not covered in this guide.
 
 Example: DriverTemplate
     
-    #A class for device drivers.
     class Driver():
     
         driver_name = 'DriverTemplate'
+        version = '2.0.1'
     
         def __init__(self):
             pass
+    
+        #returns the value of a Driver attribute
+        def get(self, attribute_name):
+            return self.__getattribute__(attribute_name)
+    
+        #sets the value of a Driver attribute
+        def set(self, attribute_name, value):
+            self.__setattr(attribute_name, value)
+    
+        #returns the name of a Driver
+        def get_driver_name(self):
+            return self.driver_name
+    
+        #sets the name of a Driver
+        def set_driver_name(self, driver_name):
+            self.driver_name = driver_name
+
 
 Some equipment providers or third parties already provide drivers in python, which can be adapted. Below is a Driver
 used for collecting data from Arduino Mega controllers using the pyfirmata library. 
@@ -767,13 +826,29 @@ A protocol requires:
 
 Example: ProtocolTemplate
 
-    #A class for protocols
     class Protocol():
-
-    protocol_name = 'ProtocolTemplate'
-
-    def __init__(self):
-        pass
+    
+        protocol_name = 'ProtocolTemplate'
+        version = '2.0.1'
+    
+        def __init__(self):
+            pass
+    
+        #returns the value of a Protocol attribute
+        def get(self, attribute_name):
+            return self.__getattribute__(attribute_name)
+    
+        #sets the value of a Protocol attribute
+        def set(self, attribute_name, value):
+            self.__setattr(attribute_name, value)
+    
+        #returns the name of a Protcol
+        def get_protocol_name(self):
+            return self.protocol_name
+    
+        #sets the name of a Protocol
+        def set_protocol_name(self, protocol_name):
+            self.protocol_name = protocol_name
 
 Protocols can also define how a given device is initialized, and how the user may interact with the device. For example
 in the below protocol for hotplates, additional code is given to ensure a robust connection and startup of the device.
@@ -1059,7 +1134,7 @@ Example: HelloWorldBoot
         flab_queue = boot_manager.create_queue()
     
         #3. create a flab object proxy
-        f = boot_manager.create_flab_proxy(ui_queue, flab_queue)
+        f = boot_manager.create_flab_proxy(ui_queue = ui_queue, flab_queue = flab_queue)
     
         #convert and run HelloWorldUI
         f.convert_ui('HelloWorldDesign')
@@ -1115,11 +1190,17 @@ outputs
 
 ## Quick Start
 
-To quickly get started with FLab using the Console:
+To quickly get started with flab using Console:
 
 1. Install the FLab package
 2. Create a Projects directory
 3. Download the Console Project from github, and copy it into your Projects folder.
-4. Run boot_console.py
+4. Run ConsoleBoot.py from the Boot folder
 5. Type in start_task('HelloWorld'). You should see repeated lines of 'Hello World' printed
 6. Type in stop_task('HelloWorld'). The printing should stop.
+
+#The Console2 Project
+Console2 is an expansion of Console, and contains buttons for easy access to flab methods, and text browsers that display
+the properties of devices, variables and running tasks.
+
+More documentation on the use of Console2 will be uploaded soon.
