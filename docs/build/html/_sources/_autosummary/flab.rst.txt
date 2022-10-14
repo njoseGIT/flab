@@ -1,0 +1,35 @@
+﻿flab
+====
+
+.. automodule:: flab
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   flab.BootManager
+   flab.DeviceManager
+   flab.Flab
+   flab.TaskManager
+   flab.UiManager
+

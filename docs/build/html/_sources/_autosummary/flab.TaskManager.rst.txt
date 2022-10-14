@@ -1,0 +1,32 @@
+flab.TaskManager
+================
+
+.. automodule:: flab.TaskManager
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      QTaskRun
+      QTaskStop
+      TaskManager
+      ThreadTrace
+   
+   
+
+   
+   
+   
+
+
+

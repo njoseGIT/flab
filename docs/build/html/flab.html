@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>flab &mdash; flab  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="flab.Templates subpackage" href="flab.Templates.html" />
+    <link rel="prev" title="Welcome to flab’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> flab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">flab</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-flab.BootManager">flab.BootManager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-flab.DeviceManager">flab.DeviceManager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-flab.Flab">flab.Flab module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-flab.TaskManager">flab.TaskManager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-flab.UiManager">flab.UiManager module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="flab.Templates.html">flab.Templates subpackage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">flab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>flab</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/flab.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="flab">
+<h1>flab<a class="headerlink" href="#flab" title="Permalink to this heading"></a></h1>
+<section id="module-flab.BootManager">
+<span id="flab-bootmanager-module"></span><h2>flab.BootManager module<a class="headerlink" href="#module-flab.BootManager" title="Permalink to this heading"></a></h2>
+<p>The BootManager module contains classes that are used to configure flab environments, in which devices,
+variables and tasks may be synchronized between different processes and threads.
+A few configurations are possible, depending on the desired application, which are specified
+in the init method.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.BootManager.BootManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.BootManager.</span></span><span class="sig-name descname"><span class="pre">BootManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.BootManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BootManager contains methods for configuring the main process by creating managers for synchronizing devices,
+tasks, variables, etc.
+across processes and threads, as well as remote/local server/client communication.
+Version 2.0.2</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.BootManager.BootManager.create_flab_proxy">
+<span class="sig-name descname"><span class="pre">create_flab_proxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flab_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.BootManager.create_flab_proxy" title="Permalink to this definition"></a></dt>
+<dd><p>creates a proxy Flab object to enable pickling i.e. synchronization of a Flab object across threads and
+processes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ui_queue</strong> (<em>Queue</em>) – The queue for sending commands to the UI process. None by default</p></li>
+<li><p><strong>flab_queue</strong> (<em>Queue</em>) – The queue for sending commands to the Flab process. None by default</p></li>
+<li><p><strong>flab_queue</strong> – The queue for sending commands to the Flab process. None by default</p></li>
+<li><p><strong>print_status</strong> (<em>boolean</em>) – If outputs should be printed. True by default.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>flab_proxy object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.BootManager.BootManager.create_queue">
+<span class="sig-name descname"><span class="pre">create_queue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.BootManager.create_queue" title="Permalink to this definition"></a></dt>
+<dd><p>creates a queue using the queue_manager</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Queue</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.BootManager.BootManager.create_remote_manager">
+<span class="sig-name descname"><span class="pre">create_remote_manager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authkey</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.BootManager.create_remote_manager" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a remote queue manager and machine/client queue for communication</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address</strong> – IP address of the communicating server</p></li>
+<li><p><strong>authkey</strong> (<em>str</em>) – authentication key</p></li>
+<li><p><strong>server</strong> (<em>boolean</em>) – indicates if the main process is a server</p></li>
+</ul>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p>address: boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.BootManager.BootManager.setup_boot_directories">
+<span class="sig-name descname"><span class="pre">setup_boot_directories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.BootManager.setup_boot_directories" title="Permalink to this definition"></a></dt>
+<dd><p>Adds project paths to the system path from the boot directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.BootManager.BootManager.shutdown">
+<span class="sig-name descname"><span class="pre">shutdown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.BootManager.shutdown" title="Permalink to this definition"></a></dt>
+<dd><p>Shuts down synchronization managers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.BootManager.BootManager.start_process">
+<span class="sig-name descname"><span class="pre">start_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flab</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.BootManager.start_process" title="Permalink to this definition"></a></dt>
+<dd><p>Starts a task as a process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flab</strong> (<a class="reference internal" href="#flab.Flab.Flab" title="flab.Flab.Flab"><em>Flab</em></a>) – the flab object</p></li>
+<li><p><strong>task_name</strong> (<em>str</em>) – the task name</p></li>
+<li><p><strong>args</strong> – arguments to be passed to the given task</p></li>
+<li><p><strong>blocking</strong> (<em>boolean</em>) – if the task should block. False by default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.BootManager.BootManager.start_processes">
+<span class="sig-name descname"><span class="pre">start_processes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flab</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_names</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.BootManager.start_processes" title="Permalink to this definition"></a></dt>
+<dd><p>Starts multiple tasks as processes simultaneously</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flab</strong> (<a class="reference internal" href="#flab.Flab.Flab" title="flab.Flab.Flab"><em>Flab</em></a>) – the flab object</p></li>
+<li><p><strong>task_names</strong> (<em>[</em><em>str</em><em>]</em>) – the task name</p></li>
+<li><p><strong>args</strong> (<em>tuple</em>) – a multidimensional tuple, where each element consists of the process arguments for each task</p></li>
+<li><p><strong>blocking</strong> (<em>boolean</em>) – if the task should block. False by default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flab.BootManager.BootManager.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2.0.2'</span></em><a class="headerlink" href="#flab.BootManager.BootManager.version" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.BootManager.FlabManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.BootManager.</span></span><span class="sig-name descname"><span class="pre">FlabManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authkey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pickle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.FlabManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SyncManager</span></code></p>
+<p>a manager class for sharing flab objects across local processes. Inherits the multiprocessing class
+SyncManager</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.BootManager.FlabProxy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.BootManager.</span></span><span class="sig-name descname"><span class="pre">FlabProxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serializer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authkey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manager_owned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.FlabProxy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamespaceProxy</span></code></p>
+<p>A proxy class for sharing flab objects</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.BootManager.RemoteManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.BootManager.</span></span><span class="sig-name descname"><span class="pre">RemoteManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authkey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pickle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.BootManager.RemoteManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SyncManager</span></code></p>
+<p>A manager class for sharing flab objects across networks. Inherits the multiprocessing class SyncManager</p>
+</dd></dl>
+
+</section>
+<section id="module-flab.DeviceManager">
+<span id="flab-devicemanager-module"></span><h2>flab.DeviceManager module<a class="headerlink" href="#module-flab.DeviceManager" title="Permalink to this heading"></a></h2>
+<p>The DeviceManager module contains classes and methods for creating and manipulating devices</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.DeviceManager.</span></span><span class="sig-name descname"><span class="pre">DeviceManager</span></span><a class="headerlink" href="#flab.DeviceManager.DeviceManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for dynamically creating and sharing device objects. Devices do not necessarily have publicly accessible
+attributes, and a “get_attr” method may be needed to access these attributes.
+Version 2.0.2</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager.get_devices">
+<span class="sig-name descname"><span class="pre">get_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.DeviceManager.get_devices" title="Permalink to this definition"></a></dt>
+<dd><p>returns devices in a flab object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a list of device names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager.load_all_devices">
+<span class="sig-name descname"><span class="pre">load_all_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.DeviceManager.load_all_devices" title="Permalink to this definition"></a></dt>
+<dd><p>Loads all devices in a project folder into a flab object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager.load_device">
+<span class="sig-name descname"><span class="pre">load_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.DeviceManager.load_device" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a predefined set of devices into a flab object as objects. The device is defined in the Devices folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>device_name</strong> (<em>str</em>) – name of the device</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager.load_devices">
+<span class="sig-name descname"><span class="pre">load_devices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.DeviceManager.load_devices" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a list of devices into a flab object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>device_names</strong> – [str]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager.register_all_devices">
+<span class="sig-name descname"><span class="pre">register_all_devices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.DeviceManager.register_all_devices" title="Permalink to this definition"></a></dt>
+<dd><p>Registers all devices within a project with the FlabDeviceManager</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager.register_device">
+<span class="sig-name descname"><span class="pre">register_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.DeviceManager.register_device" title="Permalink to this definition"></a></dt>
+<dd><p>Registers a device within a project with the FlabDeviceManager</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>device_name</strong> (<em>str</em>) – name of the device</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager.register_devices">
+<span class="sig-name descname"><span class="pre">register_devices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.DeviceManager.register_devices" title="Permalink to this definition"></a></dt>
+<dd><p>registers a list of devices within a project with the FlabDeviceManager. This is required
+before the devices are loaded into a flab object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>device_names</strong> (<em>[</em><em>str</em><em>]</em>) – array of device names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager.reload_device">
+<span class="sig-name descname"><span class="pre">reload_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.DeviceManager.reload_device" title="Permalink to this definition"></a></dt>
+<dd><p>Reloads a single device into flab. This only reloads the main device class, not the associated drivers and
+protocols. This is now deprecated after v1.0.0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager.start_device_manager">
+<span class="sig-name descname"><span class="pre">start_device_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.DeviceManager.start_device_manager" title="Permalink to this definition"></a></dt>
+<dd><p>starts the device manager</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flab.DeviceManager.DeviceManager.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2.0.2'</span></em><a class="headerlink" href="#flab.DeviceManager.DeviceManager.version" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.DeviceManager.FlabDeviceManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.DeviceManager.</span></span><span class="sig-name descname"><span class="pre">FlabDeviceManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authkey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pickle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.FlabDeviceManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SyncManager</span></code></p>
+<p>A manager class for sharing devices in a flab object and across threads and processes.
+Extends the multiprocessing class SyncManager</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flab.DeviceManager.Proxy">
+<span class="sig-prename descclassname"><span class="pre">flab.DeviceManager.</span></span><span class="sig-name descname"><span class="pre">Proxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.DeviceManager.Proxy" title="Permalink to this definition"></a></dt>
+<dd><p>A method for creating proxy classes for devices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>target</strong> – the target device object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DeviceProxy</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-flab.Flab">
+<span id="flab-flab-module"></span><h2>flab.Flab module<a class="headerlink" href="#module-flab.Flab" title="Permalink to this heading"></a></h2>
+<p>The Flab module contains the Flab and FlabNamespace classes, which are used for sharing of attributes,
+methods, variables and other objects</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.Flab.Flab">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.Flab.</span></span><span class="sig-name descname"><span class="pre">Flab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flab_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.Flab.Flab" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#flab.DeviceManager.DeviceManager" title="flab.DeviceManager.DeviceManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceManager</span></code></a>, <a class="reference internal" href="#flab.TaskManager.TaskManager" title="flab.TaskManager.TaskManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskManager</span></code></a>, <a class="reference internal" href="#flab.UiManager.UiManager" title="flab.UiManager.UiManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">UiManager</span></code></a></p>
+<p>Flab inherits DeviceManager, TaskManager, UiManager and BotManager and contains dictionaries for
+devices, tasks, vars, uis and bots.
+Version 2.0.2</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.Flab.Flab.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flab_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.Flab.Flab.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Constructs the Flab object, containing empty dictionaries</p>
+<p>Flab objects can be constructed with two queues for exchanging information between processes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ui_queue</strong> (<em>multiprocessing.Queue</em><em>(</em><em>,</em><em>queue.Queue</em><em>)</em>) – queue object that passes information to UI processes, defaults to None</p></li>
+<li><p><strong>flab_queue</strong> (<em>multiprocessing.Queue</em><em>(</em><em>,</em><em>queue.Queue</em><em>)</em>) – queue object that passes information to flab processes, defaults to None</p></li>
+<li><p><strong>print_status</strong> – a boolean indicating if output should be sent to the command prompt, defaults to True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.Flab.Flab.add_var">
+<span class="sig-name descname"><span class="pre">add_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#flab.Flab.Flab.add_var" title="Permalink to this definition"></a></dt>
+<dd><p>adds a variable with a given value to the variable dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>numbers</em><em>, </em><em>strings</em><em>, </em><em>lists</em><em>, </em><em>objects</em><em>, </em><em>etc.</em>) – value of the variable</p></li>
+<li><p><strong>variable_name</strong> (<em>str</em>) – the name of the variable</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p>Do not use devices, tasks, bots or uis in the variable dictionary.
+Avoid nested dictionaries and complex objects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.Flab.Flab.close_flab">
+<span class="sig-name descname"><span class="pre">close_flab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#flab.Flab.Flab.close_flab" title="Permalink to this definition"></a></dt>
+<dd><p>Ends all running processes and tasks within a Flab object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.Flab.Flab.close_queues">
+<span class="sig-name descname"><span class="pre">close_queues</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#flab.Flab.Flab.close_queues" title="Permalink to this definition"></a></dt>
+<dd><p>Closes any open queues</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.Flab.Flab.create_project_directory">
+<span class="sig-name descname"><span class="pre">create_project_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#flab.Flab.Flab.create_project_directory" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a project directory with a given name at a given parent path</p>
+<p>For example, create_project_directory(‘C:/Projects’,’MyFirstProject’) yields a directory
+with the following structure.</p>
+<p>C:/Projects/</p>
+<p>└ MyFirstProject/</p>
+<blockquote>
+<div><p>├ Boot/</p>
+<p>├ Tasks/</p>
+<p>├ Devices/</p>
+<p>│ ├ Drivers/</p>
+<p>│ └ Protocols/</p>
+<p>├ UIs/</p>
+<p>│ ├ Actions/</p>
+<p>│ ├ Designs/</p>
+<p>│ └ Windows/</p>
+<p>└ Bots/</p>
+<blockquote>
+<div><p>└ Algorithms/</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent_path</strong> (<em>str</em>) – full path of the parent directory (typically Projects)</p></li>
+<li><p><strong>project_name</strong> (<em>str</em>) – Name of the project</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.Flab.Flab.display">
+<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#flab.Flab.Flab.display" title="Permalink to this definition"></a></dt>
+<dd><p>Displays an object by printing to the command prompt and/or passing to ui_queue</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>object</strong> – an object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.Flab.Flab.get_namespace">
+<span class="sig-name descname"><span class="pre">get_namespace</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.Flab.Flab.get_namespace" title="Permalink to this definition"></a></dt>
+<dd><p>returns a representation of the Flab object’s attributes and contained devices, tasks, etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>FlabNamespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.Flab.Flab.message">
+<span class="sig-name descname"><span class="pre">message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#flab.Flab.Flab.message" title="Permalink to this definition"></a></dt>
+<dd><p>Displays a message. For example, message(‘HelloWorld’) leads to the
+display of “message: Hello World”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – whatever you want to send a message about</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.Flab.Flab.set_working_directory">
+<span class="sig-name descname"><span class="pre">set_working_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.Flab.Flab.set_working_directory" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the current working directory to a given path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>project_path</strong> (<em>str</em>) – the full path</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flab.Flab.Flab.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2.0.2'</span></em><a class="headerlink" href="#flab.Flab.Flab.version" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.Flab.FlabNamespace">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.Flab.</span></span><span class="sig-name descname"><span class="pre">FlabNamespace</span></span><a class="headerlink" href="#flab.Flab.FlabNamespace" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A namespace for a Flab object which contains the information on the contained objects (e.g. Devices, Tasks,
+variables)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.Flab.FlabNamespace.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#flab.Flab.FlabNamespace.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>The constructor defines the namespace attributes with the following code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">devices</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">bots</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">vars</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">modules</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">uis</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">print_status</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">is_running</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">running_tasks</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">device_attributes</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">device_methods</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">device_method_args</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">device_method_arg_descriptions</span> <span class="o">=</span> <span class="p">{}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-flab.TaskManager">
+<span id="flab-taskmanager-module"></span><h2>flab.TaskManager module<a class="headerlink" href="#module-flab.TaskManager" title="Permalink to this heading"></a></h2>
+<p>The TaskManager module includes classes and methods for creating and running synchronous/simultaneous routines</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.TaskManager.</span></span><span class="sig-name descname"><span class="pre">TaskManager</span></span><a class="headerlink" href="#flab.TaskManager.TaskManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The TaskManager class contains methods for loading, running and terminating tasks implementing python’s threading
+library, asyncio, and multiprocessing
+Version 2.0.2</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.display_alive_threads">
+<span class="sig-name descname"><span class="pre">display_alive_threads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.display_alive_threads" title="Permalink to this definition"></a></dt>
+<dd><p>displays all threads that are still alive</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.display_running_tasks">
+<span class="sig-name descname"><span class="pre">display_running_tasks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.display_running_tasks" title="Permalink to this definition"></a></dt>
+<dd><p>Displays task instances</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.execute_command">
+<span class="sig-name descname"><span class="pre">execute_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_command</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.execute_command" title="Permalink to this definition"></a></dt>
+<dd><p>A function for executing a function command</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parsed_command</strong> (<em>(</em><em>function</em><em>, </em><em>(</em><em>args</em><em>)</em><em>, </em><em>{kwargs}</em><em>)</em>) – a parsed command</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.get_running_task_names">
+<span class="sig-name descname"><span class="pre">get_running_task_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.get_running_task_names" title="Permalink to this definition"></a></dt>
+<dd><p>Returns names of running tasks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.kill_thread">
+<span class="sig-name descname"><span class="pre">kill_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.kill_thread" title="Permalink to this definition"></a></dt>
+<dd><p>directly kills a thread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>thread_name</strong> (<em>str</em>) – name of the thread</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.load_all_tasks">
+<span class="sig-name descname"><span class="pre">load_all_tasks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.load_all_tasks" title="Permalink to this definition"></a></dt>
+<dd><p>load every task present in the current project’s Tasks folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.load_start_task">
+<span class="sig-name descname"><span class="pre">load_start_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.load_start_task" title="Permalink to this definition"></a></dt>
+<dd><p>Load and start a task in one method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – name of the task</p></li>
+<li><p><strong>args</strong> – task arguments</p></li>
+<li><p><strong>kwargs</strong> – task keyword arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.load_task">
+<span class="sig-name descname"><span class="pre">load_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.load_task" title="Permalink to this definition"></a></dt>
+<dd><p>load a single task into flab. The task name is given by the filename, without the ‘.py’ at the end</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task_name</strong> – the task’s name</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.load_tasks">
+<span class="sig-name descname"><span class="pre">load_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.load_tasks" title="Permalink to this definition"></a></dt>
+<dd><p>load a list of tasks into flab. task_names is an array of the task names (string)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task_names</strong> (<em>[</em><em>str</em><em>]</em>) – list of the task names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.reload_start_task">
+<span class="sig-name descname"><span class="pre">reload_start_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.reload_start_task" title="Permalink to this definition"></a></dt>
+<dd><p>reload and start a task in one method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – name of the task</p></li>
+<li><p><strong>args</strong> – task arguments</p></li>
+<li><p><strong>kwargs</strong> – task keyword arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.reload_task">
+<span class="sig-name descname"><span class="pre">reload_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.reload_task" title="Permalink to this definition"></a></dt>
+<dd><p>reload a single task into a flab object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task_name</strong> (<em>str</em>) – name of the task</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.reload_tasks">
+<span class="sig-name descname"><span class="pre">reload_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.reload_tasks" title="Permalink to this definition"></a></dt>
+<dd><p>reload multiple tasks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task_names</strong> (<em>[</em><em>str</em><em>]</em>) – names of tasks in a list</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.send_command">
+<span class="sig-name descname"><span class="pre">send_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.send_command" title="Permalink to this definition"></a></dt>
+<dd><p>A function for making passing function commands between different processes easier
+:param queue:
+:type queue: Queue</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function_name</strong> (<em>str</em>) – name of the function</p></li>
+<li><p><strong>args</strong> – task arguments</p></li>
+<li><p><strong>kwargs</strong> – task keyword arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.start_asyncio_task">
+<span class="sig-name descname"><span class="pre">start_asyncio_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.start_asyncio_task" title="Permalink to this definition"></a></dt>
+<dd><p>Start an asyncio task by first creating an asyncio task to “main” from the run method, putting this into a
+separate thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – name of the task</p></li>
+<li><p><strong>args</strong> – task arguments</p></li>
+<li><p><strong>kwargs</strong> – task keyword arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.start_asyncio_tasks">
+<span class="sig-name descname"><span class="pre">start_asyncio_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_names</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.start_asyncio_tasks" title="Permalink to this definition"></a></dt>
+<dd><p>start multiple asyncio tasks within the same thread by creating one “main” method which is comprised of multiple
+asyncio tasks created from task run methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_names</strong> (<em>list of strings</em>) – names of the tasks</p></li>
+<li><p><strong>args</strong> – task arguments</p></li>
+<li><p><strong>kwargs</strong> – task keyword arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.start_process">
+<span class="sig-name descname"><span class="pre">start_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.start_process" title="Permalink to this definition"></a></dt>
+<dd><p>Start a process with the run method,  with input arguments args and kwargs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – name of the task</p></li>
+<li><p><strong>args</strong> – args for the task</p></li>
+<li><p><strong>blocking</strong> (<em>boolean</em>) – if the task is blocking (False by default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.start_processes">
+<span class="sig-name descname"><span class="pre">start_processes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_names</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.start_processes" title="Permalink to this definition"></a></dt>
+<dd><p>Start multiple processes at once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_names</strong> (<em>[</em><em>str</em><em>]</em>) – name of the task</p></li>
+<li><p><strong>args</strong> – args is a multidimensional tuple, where each element consists of the process arguments</p></li>
+<li><p><strong>blocking</strong> (<em>boolean</em>) – if the task is blocking (False by default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.start_task">
+<span class="sig-name descname"><span class="pre">start_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.start_task" title="Permalink to this definition"></a></dt>
+<dd><p>start a task using the “run” method. By default this runs each task as a thread, but if the task type is
+specified otherwise, it will start the task as an asyncio thread or a process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – name of the task</p></li>
+<li><p><strong>args</strong> – arguments for the task</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments for the task</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.start_thread">
+<span class="sig-name descname"><span class="pre">start_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.start_thread" title="Permalink to this definition"></a></dt>
+<dd><p>Start a thread with the run method, with input arguments args and kwargs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – name of the task</p></li>
+<li><p><strong>args</strong> – task arguments</p></li>
+<li><p><strong>kwargs</strong> – task keyword arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.stop_all_tasks">
+<span class="sig-name descname"><span class="pre">stop_all_tasks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.stop_all_tasks" title="Permalink to this definition"></a></dt>
+<dd><p>this method stops all running tasks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.stop_asyncio_task">
+<span class="sig-name descname"><span class="pre">stop_asyncio_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.stop_asyncio_task" title="Permalink to this definition"></a></dt>
+<dd><p>Stop an asyncio task similarly to starting, but creating the main asyncio task from the stop method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – name of the task</p></li>
+<li><p><strong>args</strong> – task arguments</p></li>
+<li><p><strong>kwargs</strong> – task keyword arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.stop_asyncio_tasks">
+<span class="sig-name descname"><span class="pre">stop_asyncio_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_names</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.stop_asyncio_tasks" title="Permalink to this definition"></a></dt>
+<dd><p>stop multiple asyncio tasks similarly to starting multiple asyncio tasks, but using the stop methods. Note:
+this will not stop multiple asyncio tasks if the asyncio tasks have not been run all together using
+“start_asyncio_tasks”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_names</strong> (<em>[</em><em>str</em><em>]</em>) – name of the tasks</p></li>
+<li><p><strong>args</strong> – task arguments</p></li>
+<li><p><strong>kwargs</strong> – task keyword arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.stop_process">
+<span class="sig-name descname"><span class="pre">stop_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.stop_process" title="Permalink to this definition"></a></dt>
+<dd><p>stop a process by terminating the running task, then calling the stop method of the process as another process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – the task name</p></li>
+<li><p><strong>args</strong> – args is a multidimensional tuple, where each element consists of the process arguments</p></li>
+<li><p><strong>blocking</strong> (<em>boolean</em>) – if the task is blocking (True by default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.stop_task">
+<span class="sig-name descname"><span class="pre">stop_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.stop_task" title="Permalink to this definition"></a></dt>
+<dd><p>Stop a task using the task’s “stop” method. By default this runs each task as a thread, but if the task type
+is specified otherwise, it will start the task as an asyncio thread or a process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – name of the task</p></li>
+<li><p><strong>args</strong> – arguments for the task</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments for the task</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.stop_thread">
+<span class="sig-name descname"><span class="pre">stop_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.TaskManager.stop_thread" title="Permalink to this definition"></a></dt>
+<dd><p>Stop a thread with the stop method, with input arguments args and kwargs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – name of the task</p></li>
+<li><p><strong>args</strong> – task arguments</p></li>
+<li><p><strong>kwargs</strong> – task keyword arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flab.TaskManager.TaskManager.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2.0.2'</span></em><a class="headerlink" href="#flab.TaskManager.TaskManager.version" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.TaskManager.ThreadTrace">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.TaskManager.</span></span><span class="sig-name descname"><span class="pre">ThreadTrace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flab</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.ThreadTrace" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Thread</span></code></p>
+<p>A class for killable threads using traces. Inherits Thread from the threading library.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.ThreadTrace.globaltrace">
+<span class="sig-name descname"><span class="pre">globaltrace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.ThreadTrace.globaltrace" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a global trace for the thread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame</strong> – frame</p></li>
+<li><p><strong>event</strong> – event</p></li>
+<li><p><strong>arg</strong> – argument</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>localtrace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.ThreadTrace.kill">
+<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.ThreadTrace.kill" title="Permalink to this definition"></a></dt>
+<dd><p>raises a flag to kill a thread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.ThreadTrace.localtrace">
+<span class="sig-name descname"><span class="pre">localtrace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.ThreadTrace.localtrace" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a local trace for the thread. If the thread is killed the thread will exit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame</strong> – frame</p></li>
+<li><p><strong>event</strong> – event</p></li>
+<li><p><strong>arg</strong> – argument</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>localtrace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.TaskManager.ThreadTrace.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.TaskManager.ThreadTrace.start" title="Permalink to this definition"></a></dt>
+<dd><p>starts the thread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-flab.UiManager">
+<span id="flab-uimanager-module"></span><h2>flab.UiManager module<a class="headerlink" href="#module-flab.UiManager" title="Permalink to this heading"></a></h2>
+<p>The UIManager module contains class and methods for creating, loading and converting UIs</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="flab.UiManager.UiManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flab.UiManager.</span></span><span class="sig-name descname"><span class="pre">UiManager</span></span><a class="headerlink" href="#flab.UiManager.UiManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class containing methods for converting and loading UIs. Note: PyQT interfaces generally need to bed
+be started within a main method or separate process</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.UiManager.UiManager.convert_ui">
+<span class="sig-name descname"><span class="pre">convert_ui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui_file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.UiManager.UiManager.convert_ui" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a UI from a ui file to python file with the same name within the “Designs” folder using the PyQt
+library. This method is now deprecated to reduce dependencies on PyQt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ui_file_name</strong> (<em>str</em>) – name of the .ui file in the Designs folder</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.UiManager.UiManager.create_ui">
+<span class="sig-name descname"><span class="pre">create_ui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.UiManager.UiManager.create_ui" title="Permalink to this definition"></a></dt>
+<dd><p>Dynamically creates a ui class that inherits the design and methods classes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_name</strong> (<em>str</em>) – name of the design file</p></li>
+<li><p><strong>design_class_name</strong> (<em>str</em>) – name of the design class</p></li>
+<li><p><strong>methods_name</strong> (<em>str</em>) – NAme of the methods class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ui object or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.UiManager.UiManager.load_all_uis">
+<span class="sig-name descname"><span class="pre">load_all_uis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flab.UiManager.UiManager.load_all_uis" title="Permalink to this definition"></a></dt>
+<dd><p>Load every UI in the UI folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.UiManager.UiManager.load_ui">
+<span class="sig-name descname"><span class="pre">load_ui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.UiManager.UiManager.load_ui" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a predefined UI from the UI folder into a flab object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ui_name</strong> (<em>str</em>) – name of the ui</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.UiManager.UiManager.load_uis">
+<span class="sig-name descname"><span class="pre">load_uis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.UiManager.UiManager.load_uis" title="Permalink to this definition"></a></dt>
+<dd><p>Load a list of UIs into flab</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ui_names</strong> (<em>[</em><em>str</em><em>]</em>) – list of UI names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.UiManager.UiManager.reload_all_uis">
+<span class="sig-name descname"><span class="pre">reload_all_uis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.UiManager.UiManager.reload_all_uis" title="Permalink to this definition"></a></dt>
+<dd><p>Dynamically reload all UIs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ui_names</strong> (<em>[</em><em>str</em><em>]</em>) – list of ui names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flab.UiManager.UiManager.reload_ui">
+<span class="sig-name descname"><span class="pre">reload_ui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ui_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flab.UiManager.UiManager.reload_ui" title="Permalink to this definition"></a></dt>
+<dd><p>Dynamically reload a UI</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ui_name</strong> (<em>str</em>) – name of UI</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flab.UiManager.UiManager.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2.0.2'</span></em><a class="headerlink" href="#flab.UiManager.UiManager.version" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to flab’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="flab.Templates.html" class="btn btn-neutral float-right" title="flab.Templates subpackage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, flab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

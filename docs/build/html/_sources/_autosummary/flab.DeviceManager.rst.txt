@@ -1,0 +1,36 @@
+flab.DeviceManager
+==================
+
+.. automodule:: flab.DeviceManager
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      Proxy
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DeviceManager
+      FlabDeviceManager
+   
+   
+
+   
+   
+   
+
+
+

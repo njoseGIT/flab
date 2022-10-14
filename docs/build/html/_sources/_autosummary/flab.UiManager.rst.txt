@@ -1,0 +1,29 @@
+flab.UiManager
+==============
+
+.. automodule:: flab.UiManager
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      UiManager
+   
+   
+
+   
+   
+   
+
+
+

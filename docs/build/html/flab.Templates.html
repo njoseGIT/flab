@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>flab.Templates subpackage &mdash; flab  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="flab" href="flab.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> flab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="flab.html">flab</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">flab.Templates subpackage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-Templates.DeviceTemplate">Templates.DeviceTemplate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Templates.DriverTemplate">Templates.DriverTemplate module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Templates.ProtocolTemplate">Templates.ProtocolTemplate module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">flab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>flab.Templates subpackage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/flab.Templates.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="flab-templates-subpackage">
+<h1>flab.Templates subpackage<a class="headerlink" href="#flab-templates-subpackage" title="Permalink to this heading"></a></h1>
+<section id="module-Templates.DeviceTemplate">
+<span id="templates-devicetemplate-module"></span><h2>Templates.DeviceTemplate module<a class="headerlink" href="#module-Templates.DeviceTemplate" title="Permalink to this heading"></a></h2>
+<p>DeviceTemplate contains default methods for accessing device properties</p>
+<p>Version 2.0.3</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Templates.DeviceTemplate.</span></span><span class="sig-name descname"><span class="pre">Device</span></span><a class="headerlink" href="#Templates.DeviceTemplate.Device" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Driver</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DeviceTemplate.Device.get" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the value of an attribute by its name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>attribute_name</strong> (<em>string</em>) – name of the attribute</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device.get_device_name">
+<span class="sig-name descname"><span class="pre">get_device_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DeviceTemplate.Device.get_device_name" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the name of a Device</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>name of the device (string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device.get_flab">
+<span class="sig-name descname"><span class="pre">get_flab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DeviceTemplate.Device.get_flab" title="Permalink to this definition"></a></dt>
+<dd><p>returns the flab object of a Device</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>flab object (Flab)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device.list_attributes">
+<span class="sig-name descname"><span class="pre">list_attributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DeviceTemplate.Device.list_attributes" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the attributes of a Device in a list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device.list_method_args">
+<span class="sig-name descname"><span class="pre">list_method_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DeviceTemplate.Device.list_method_args" title="Permalink to this definition"></a></dt>
+<dd><p>returns the arguments of a method of a Device in a list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>method_name</strong> (<em>string</em>) – name of a method</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of strings</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device.list_methods">
+<span class="sig-name descname"><span class="pre">list_methods</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DeviceTemplate.Device.list_methods" title="Permalink to this definition"></a></dt>
+<dd><p>returns the methods of a Device in a list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of strings</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DeviceTemplate.Device.set" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the value of a Device attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attribute_name</strong> (<em>string</em>) – name of the attribute</p></li>
+<li><p><strong>value</strong> – new value of the attribute</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device.set_device_name">
+<span class="sig-name descname"><span class="pre">set_device_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DeviceTemplate.Device.set_device_name" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the name of a device</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>device_name</strong> (<em>string</em>) – the device name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device.set_flab">
+<span class="sig-name descname"><span class="pre">set_flab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flab</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DeviceTemplate.Device.set_flab" title="Permalink to this definition"></a></dt>
+<dd><p>sets the flab object of a Device</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flab</strong> (<a class="reference internal" href="flab.html#flab.Flab.Flab" title="flab.Flab.Flab"><em>Flab</em></a>) – a flab object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Templates.DeviceTemplate.Device.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2.0.2'</span></em><a class="headerlink" href="#Templates.DeviceTemplate.Device.version" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-Templates.DriverTemplate">
+<span id="templates-drivertemplate-module"></span><h2>Templates.DriverTemplate module<a class="headerlink" href="#module-Templates.DriverTemplate" title="Permalink to this heading"></a></h2>
+<p>DriverTemplate contains default methods for accessing Driver properties</p>
+<p>Version 2.0.3</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="Templates.DriverTemplate.Driver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Templates.DriverTemplate.</span></span><span class="sig-name descname"><span class="pre">Driver</span></span><a class="headerlink" href="#Templates.DriverTemplate.Driver" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DriverTemplate.Driver.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DriverTemplate.Driver.get" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the value of an attribute by its name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>attribute_name</strong> (<em>string</em>) – name of the attribute</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DriverTemplate.Driver.get_driver_name">
+<span class="sig-name descname"><span class="pre">get_driver_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DriverTemplate.Driver.get_driver_name" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the name of a Driver</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>name of the driver (string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DriverTemplate.Driver.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DriverTemplate.Driver.set" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the value of a Device attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attribute_name</strong> (<em>string</em>) – name of the attribute</p></li>
+<li><p><strong>value</strong> – new value of the attribute</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.DriverTemplate.Driver.set_driver_name">
+<span class="sig-name descname"><span class="pre">set_driver_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">driver_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.DriverTemplate.Driver.set_driver_name" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the name of a device</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>driver_name</strong> (<em>string</em>) – the driver name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Templates.DriverTemplate.Driver.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2.0.3'</span></em><a class="headerlink" href="#Templates.DriverTemplate.Driver.version" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-Templates.ProtocolTemplate">
+<span id="templates-protocoltemplate-module"></span><h2>Templates.ProtocolTemplate module<a class="headerlink" href="#module-Templates.ProtocolTemplate" title="Permalink to this heading"></a></h2>
+<p>ProtocolTemplate contains default methods for accessing Protocol properties</p>
+<p>Version 2.0.3</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="Templates.ProtocolTemplate.Protocol">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Templates.ProtocolTemplate.</span></span><span class="sig-name descname"><span class="pre">Protocol</span></span><a class="headerlink" href="#Templates.ProtocolTemplate.Protocol" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.ProtocolTemplate.Protocol.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.ProtocolTemplate.Protocol.get" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the value of an attribute by its name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>attribute_name</strong> (<em>string</em>) – name of the attribute</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.ProtocolTemplate.Protocol.get_protocol_name">
+<span class="sig-name descname"><span class="pre">get_protocol_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Templates.ProtocolTemplate.Protocol.get_protocol_name" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the name of a Protocol</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>name of the protocol (string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.ProtocolTemplate.Protocol.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.ProtocolTemplate.Protocol.set" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the value of a Device attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attribute_name</strong> (<em>string</em>) – name of the attribute</p></li>
+<li><p><strong>value</strong> – new value of the attribute</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Templates.ProtocolTemplate.Protocol.set_protocol_name">
+<span class="sig-name descname"><span class="pre">set_protocol_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Templates.ProtocolTemplate.Protocol.set_protocol_name" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the name of a Protocol</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>protocol_name</strong> (<em>string</em>) – the protocol name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Templates.ProtocolTemplate.Protocol.version">
+<span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2.0.3'</span></em><a class="headerlink" href="#Templates.ProtocolTemplate.Protocol.version" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="flab.html" class="btn btn-neutral float-left" title="flab" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, flab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
