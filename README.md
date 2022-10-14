@@ -1,7 +1,8 @@
 # flab
 
 Author: Nicholas A. Jose
-Version: 2.0.2
+
+For code documentation, go to https://flab.readthedocs.io/en/latest/
 
 ## Recent Updates
 1.0.0: Device objects have publicly accessible attributes and methods.
@@ -22,6 +23,8 @@ and ProtocolTemplate, which may be inherited by Device classes.
 2.0.2: Docstrings created 
 
 2.0.3: Docstrings amended
+
+2.0.4/2.0.5: Setup file amended
 
 ## Summary
 
