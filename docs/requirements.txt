@@ -1,2 +1,2 @@
 setuptools~=56.0.0
-flab~=2.0.3
+flab>=2.0.3
