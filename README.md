@@ -1,7 +1,7 @@
 # flab
 
 Author: Nicholas A. Jose
-Version: 2.0.1
+Version: 2.0.2
 
 ## Recent Updates
 1.0.0: Device objects have publicly accessible attributes and methods.
@@ -18,6 +18,10 @@ flab is no longer dependent on PyQT. Templates are now included within flab.Temp
 and ProtocolTemplate, which may be inherited by Device classes.
 
 2.0.1: Resolved bug in distribution
+
+2.0.2: Docstrings created 
+
+2.0.3: Docstrings amended
 
 ## Summary
 
@@ -104,10 +108,14 @@ A Flab object acts as a space for the shared storage of:
 The Flab class inherits DeviceManager, TaskManager and UiManager, such that methods in those classes may be easily 
 customized. These managers contain methods for manipulating devices, tasks and ui's.
 
-Example usage: Creating flab
+A Flab object can also be created with optional queues to enable communication with a user interface (the "ui_queue") and a 
+machine ("flab_queue"), which are None by default. Messages from flab can also be output to the terminal/command line with the 
+boolean "print_status"
+
+Example usage: Creating flab without queues and not printing to the command line/terminal
 
     from flab import Flab
-    flab = Flab.Flab()
+    flab = Flab.Flab(print_status = False)
 
 ## Tasks
 
