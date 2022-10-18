@@ -1,6 +1,4 @@
 # Flab
-# Version 2.0.2
-# Published 17-Jul-2022
 # Distributed under GNU GPL v3
 # Author: Nicholas Jose
 
@@ -19,9 +17,9 @@ import inspect
 class Flab(DeviceManager.DeviceManager, TaskManager.TaskManager, UiManager.UiManager):
     """Flab inherits DeviceManager, TaskManager, UiManager and BotManager and contains dictionaries for
      devices, tasks, vars, uis and bots.
-     Version 2.0.2
     """
-    version = '2.0.2'
+    version = '2.0.7'
+    modules = {}  # module dictionary
 
     def __init__(self, ui_queue=None, flab_queue=None, print_status=True):
         """
@@ -40,7 +38,6 @@ class Flab(DeviceManager.DeviceManager, TaskManager.TaskManager, UiManager.UiMan
         :returns: None
         """
 
-        super().__init__()
         self.ui_queue = ui_queue
         self.flab_queue = flab_queue
         self.devices = {}  # device dictionary
@@ -50,7 +47,6 @@ class Flab(DeviceManager.DeviceManager, TaskManager.TaskManager, UiManager.UiMan
         self.bots = {}  # bot dictionary
         self.print_status = print_status  # True if outputs are to be displayed through the python console
         self.is_running = True  # True if flab has been initiated within a running program
-        self.modules = {}  # module dictionary
 
     def add_var(self, value, variable_name) -> None:
         """adds a variable with a given value to the variable dictionary

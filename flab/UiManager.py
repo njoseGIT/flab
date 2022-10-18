@@ -1,7 +1,5 @@
 # Flab
 # UiManager
-# Version 2.0.2
-# Published XX-XXX-XXXX
 # Distributed under GNU GPL v3
 # Author: Nicholas Jose
 
@@ -19,10 +17,11 @@ class UiManager:
     be started within a main method or separate process
     """
 
-    version = '2.0.2'
+    version = '2.0.6'
+    uis = {}
 
     def __init__(self):
-        self.uis = {}
+        pass
 
     def convert_ui(self, ui_file_name):
         """

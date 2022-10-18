@@ -1,7 +1,5 @@
 # Flab
 # BootManager
-# Version 2.0.2
-# Published XX-XXX-XXXX
 # Distributed under GNU GPL v3
 # Author: Nicholas Jose
 
@@ -24,10 +22,9 @@ class BootManager:
     """BootManager contains methods for configuring the main process by creating managers for synchronizing devices,
     tasks, variables, etc.
     across processes and threads, as well as remote/local server/client communication.
-    Version 2.0.2
     """
 
-    version = '2.0.2'
+    version = '2.0.6'
 
     def __init__(self, server=False, client=False, print_status=True):
         """

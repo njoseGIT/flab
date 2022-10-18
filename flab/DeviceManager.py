@@ -1,7 +1,5 @@
 # Flab
 # DeviceManager
-# Version 2.0.2
-# Published XX-XXX-XXXX
 # Distributed under GNU GPL v3
 # Author: Nicholas Jose
 
@@ -27,15 +25,16 @@ class DeviceManager:
     """
     A class for dynamically creating and sharing device objects. Devices do not necessarily have publicly accessible
     attributes, and a "get_attr" method may be needed to access these attributes.
-    Version 2.0.2
     """
 
-    version = '2.0.2'
+    version = '2.0.6'
+    devices = {}
+    flab_device_manager = FlabDeviceManager()
+    load_all_devices_completed = False
 
     def __init__(self):
-        self.devices = {}
-        self.flab_device_manager = FlabDeviceManager()
-        self.load_all_devices_completed = False
+        pass
+
 
     def register_device(self, device_name):
         """

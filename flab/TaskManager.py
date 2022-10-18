@@ -1,7 +1,5 @@
 # Flab
 # TaskManager
-# Version 2.0.2
-# Published XX-XXX-XXXX
 # Distributed under GNU GPL v3
 # Author: Nicholas Jose
 # Update: No longer contains Qthread capabilities to remove dependency on PyQt
@@ -21,15 +19,15 @@ class TaskManager:
     """
     The TaskManager class contains methods for loading, running and terminating tasks implementing python\'s threading
     library, asyncio, and multiprocessing
-    Version 2.0.2
     """
 
-    version = '2.0.2'
+    version = '2.0.6'
+    tasks = {}  # dictionary of loaded tasks
+    running_tasks = {}  # dictionary of running tasks (i.e. instances of threads)
+    load_all_tasks_completed = False
 
     def __init__(self):
-        self.tasks = {}  # dictionary of loaded tasks
-        self.running_tasks = {}  # dictionary of running tasks (i.e. instances of threads)
-        self.load_all_tasks_completed = False
+        pass
 
     def load_task(self, task_name):
         """
