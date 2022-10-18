@@ -26,6 +26,8 @@ and ProtocolTemplate, which may be inherited by Device classes.
 
 2.0.4/2.0.5: Setup file amended
 
+2.0.6/7: Resolved bug in Flab inheritance
+
 ## Summary
 
 Flab was created to be a fast, flexible and fun framework for creating automated chemical laboratories. As a coding
