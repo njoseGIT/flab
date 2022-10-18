@@ -57,7 +57,7 @@ To install flab, enter into the terminal
 
     python3 -m pip install flab
 
-The dependency PyQt5 must also be installed, using
+As of 2.0.0, PyQt5 is no longer needed. For earlier versions the PyQt5 may also be installed, using
 
     python3 -m pip install PyQt5
 
