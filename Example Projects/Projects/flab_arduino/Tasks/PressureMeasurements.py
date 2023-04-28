@@ -13,13 +13,13 @@ class Task():
     def run(self, channel_pin = 1):
         try:
             # ensure that the task_stopped flag is false
-            self.task_stopped = False
+            self.flab.vars['stop_pressure_measurements'] = False
 
             # create a local reference to the device
             p = self.flab.devices['PressureSensor']
 
             # set the port
-            p.set_port('/dev/tty.usbmodem144201')
+            p.set_port('COM5')
 
             #connect the sensors with appropriate constants
             p.connect_sensors([0,1,2,3,4,5,6,7,8,9],[1.724,1.724,1.724,1.724,1.724,1.724,1.724,1.724,1.724,1.724],[0,0,0,0,0,0,0,0,0,0])
@@ -32,7 +32,7 @@ class Task():
 
             if p.get('is_sensor_connected'):
 
-                while not self.task_stopped:
+                while not self.flab.vars['stop_pressure_measurements']:
                     # get the pressures
                     #pres = p.get_pressure_all()
                     all_pressures = p.get_avg_pressure_all(1,5)
@@ -58,4 +58,4 @@ class Task():
             pass
 
     def stop(self):
-        self.task_stopped = True #a flag to stop recording
+        self.flab.vars['stop_pressure_measurements'] = True #a flag to stop recording
