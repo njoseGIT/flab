@@ -12,7 +12,7 @@ class Task():
     #run the task with a default channel pin of 1
     def run(self, channel_pin = 1):
         try:
-            # ensure that the task_stopped flag is false
+            # create a flag to stop the task on demand
             self.flab.vars['stop_pressure_measurements'] = False
 
             # create a local reference to the device
