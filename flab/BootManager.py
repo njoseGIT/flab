@@ -1,15 +1,16 @@
-# Flab
+# Flab 3
 # BootManager
 # Distributed under GNU GPL v3
 # Author: Nicholas Jose
 
 """
 The BootManager module contains classes that are used to configure flab environments, in which devices,
-variables and tasks may be synchronized between different processes and threads.
+variables, tasks and data objects may be synchronized between different processes and threads.
 A few configurations are possible, depending on the desired application, which are specified
 in the init method.
 """
 
+import multiprocessing
 from flab import Flab
 from multiprocessing import Process, Queue
 from multiprocessing.managers import NamespaceProxy, SyncManager, Namespace
@@ -17,16 +18,13 @@ import types
 import sys
 import os
 
-
 class BootManager:
-    """BootManager contains methods for configuring the main process by creating managers for synchronizing devices,
-    tasks, variables, etc.
-    across processes and threads, as well as remote/local server/client communication.
+    """
+    The BootManager class contains methods for configuring the main process. It creates managers for synchronizing devices,
+    tasks, variables, etc. across processes and threads, as well as network communication.
     """
 
-    version = '2.0.6'
-
-    def __init__(self, server=False, client=False, print_status=True):
+    def __init__(self, server=False, client=False, print_status=True, environment_path = ''):
         """
         constructs the manager for synchronizing flab (flab_manager) and queues (queue_manager)
 
@@ -36,12 +34,23 @@ class BootManager:
         :type client: boolean
         :returns: None
         """
-
+        if environment_path != '':
+            try:
+                if sys.platform.startswith('win'):
+                    exec_path = os.path.join(environment_path, 'Scripts', 'python.exe')
+                else:
+                    bin_dir = 'Scripts' if sys.platform.startswith('win') else 'bin'
+                    exec_path = os.path.join(environment_path, bin_dir, 'python')
+                self.activate_environment(exec_path)
+            except Exception as e:
+                exec_path = ''
+            finally:
+                pass
         self.processes = {}
         self.managers = {}
         self.remote_manager = None
         self.server = None
-
+        self.server = None
         try:
             self.setup_boot_directories()
             FlabManager.register('Flab', Flab.Flab, FlabProxy)
@@ -51,6 +60,7 @@ class BootManager:
                 remote_flab_queue = Queue()
                 remote_flab_namespace = Namespace()
                 remote_flab_namespace.devices = []
+                remote_flab_namespace.data = []
                 RemoteManager.register('machine_queue', callable=lambda: machine_queue)
                 RemoteManager.register('client_queue', callable=lambda: client_queue)
                 RemoteManager.register('remote_flab_queue', callable=lambda: remote_flab_queue)
@@ -71,6 +81,46 @@ class BootManager:
             if self.print_status:
                 print('Error in creating boot manager')
                 print(e)
+        finally:
+            pass
+
+    def activate_environment(self, exec_path):
+        """
+        Activates the specified environment given by the path of the executable
+
+        :param exec_path: path to the python executable in the new environment
+        """
+        try:
+            import os, sys
+            multiprocessing.set_executable(exec_path)
+            # set environment variable PATH
+            old_os_path = os.environ.get('PATH', '')
+            os.environ['PATH'] = os.path.dirname(os.path.abspath(exec_path)) + os.pathsep + old_os_path
+            base = os.path.dirname(os.path.dirname(os.path.abspath(exec_path)))
+            # site-packages path
+            if sys.platform == 'win32':
+                site_packages = os.path.join(base, 'Lib', 'site-packages')
+            else:
+                site_packages = os.path.join(base, 'lib', 'python%s' % sys.version[:3], 'site-packages')
+            # modify sys.path
+            prev_sys_path = list(sys.path)
+            # remove previous environment
+            #for item in prev_sys_path:
+            #    sys.path.remove(item)
+            import site
+            site.addsitedir(site_packages)
+            sys.real_prefix = sys.prefix
+            sys.prefix = base
+            # Move the added items to the front of the path:
+            new_sys_path = []
+            for item in list(sys.path):
+                if item not in prev_sys_path:
+                    new_sys_path.append(item)
+                    sys.path.remove(item)
+            sys.path[:0] = new_sys_path
+        except Exception as e:
+            self.display('Error in activating environment')
+            self.display(e)
         finally:
             pass
 
@@ -108,15 +158,23 @@ class BootManager:
 
         :returns: None
         """
-        if 'Boot' in os.getcwd():
-            os.chdir('..')
-            cwd = os.getcwd()
-            par1 = os.path.abspath(os.path.join(cwd, '..'))
-            par2 = os.path.abspath(os.path.join(par1, '..'))
-            sys.path.append(par2)
-        else:
-            if self.print_status:
-                print('BootManager object must be created in a script in the boot directory')
+        try:
+            if 'Boot' in os.getcwd():
+                os.chdir('..')
+                cwd = os.getcwd()
+                par1 = os.path.abspath(os.path.join(cwd, '..'))
+                par2 = os.path.abspath(os.path.join(par1, '..'))
+                sys.path.append(par2)
+            else:
+                cwd = os.getcwd()
+                par1 = os.path.abspath(os.path.join(cwd, '..'))
+                par2 = os.path.abspath(os.path.join(par1, '..'))
+                sys.path.append(par2)
+        except Exception as e:
+            print('Error in BootManager directory setup')
+            print(e)
+        finally:
+            pass
 
     def create_queue(self):
         """
@@ -149,9 +207,16 @@ class BootManager:
         flab_proxy.devices = self.flab_manager.dict()  # device dictionary
         flab_proxy.vars = self.flab_manager.dict()  # variable dictionary
         flab_proxy.uis = self.flab_manager.dict()  # GUI dictionary
+        flab_proxy.data = self.flab_manager.dict() # data dictionary
+        flab_proxy.parsers = self.flab_manager.dict() # parsers dictionary
+        flab_proxy.connectors = self.flab_manager.dict() #connectors dictionary
+
         return flab_proxy
 
-    def start_process(self, flab, task_name, *args, blocking=False):
+    def helloworld(self):
+        print(sys.exec_prefix)
+
+    def start_process(self, flab, task_name, *args, blocking=False, environment_path = '', **kwargs):
         """
         Starts a task as a process
 
@@ -170,7 +235,12 @@ class BootManager:
         """
 
         process_class = flab.tasks[task_name]
-        process = Process(target=process_class.run, args=args)
+        if environment_path != '':
+            exec_path = environment_path +'/Scripts/python.exe'
+        else:
+            exec_path = ''
+        #     multiprocessing.set_executable(environment_path +'/Scripts/python.exe')
+        process = Process(target=process_class.run, args=args, kwargs=kwargs)
         process.start()
         if blocking:
             process.join()
@@ -205,7 +275,7 @@ class BootManager:
             index = index + 1
         if blocking:
             for p in processes:
-                procs[p].join()
+                processes[p].join()
         return processes
 
     def shutdown(self):
@@ -239,7 +309,6 @@ class FlabProxy(NamespaceProxy):
 
             return wrapper
         return result
-
 
 class FlabManager(SyncManager):
     """a manager class for sharing flab objects across local processes. Inherits the multiprocessing class

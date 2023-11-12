@@ -28,6 +28,13 @@ and ProtocolTemplate, which may be inherited by Device classes.
 
 2.0.6/7: Resolved bug in Flab inheritance
 
+3.0.0: 
+-Resolved issues in reloading of devices. 
+-Added ModelManager, DataManager and EnvironmentManager.
+-Added ModelTemplate and DataTemplate
+-Removal of Driver/Protocol inheritance in Devices for simplicity
+-Shared classes (Task, Device, etc.) init methods not required anymore
+
 ## Summary
 
 Flab was created to be a fast, flexible and fun framework for creating automated chemical laboratories. As a coding
@@ -51,20 +58,74 @@ This package provides methods for the management of a shared object space (the F
 (the TaskManager class), configuring shared devices (the DeviceManager class), and interfaces (the UiManager class).
 This package also includes methods for running a given project (BootManager)
 
-## Installation
+## Flab Installation
 
-To install flab, enter into the terminal
+To install flab, enter into the terminal:
 
     python3 -m pip install flab
 
-As of 2.0.0, PyQt5 is no longer needed. For earlier versions the PyQt5 may also be installed, using
+## Flab Console
 
-    python3 -m pip install PyQt5
+We recommend the use of Flab Console to manage the flab environment.
+Flab Console provides a graphical user interface for sending flab commands and visualize all objects present. 
+This is extremely useful for quickly prototyping code, as you do not need to restart python each time you need to modify a task.
+Instead, you can simply change your code, save the file, "reload" the class in flab, and start it.
+
+The Console Command Line takes only flab commands as inputs. For example
+
+    flab.start_task('HelloWorld')
+
+becomes
+    
+    >start_task('Hello World')
+
+the display method can be used to print out data in the console. For example
+
+    >display('Hello World')
+
+displays
+
+    'Hello World'
+
+If you wish to print out attributes, for example, the items in a flab dictionary or a flab variable, you need to use
+
+    >display(flab.attribute)
+
+for example
+
+    >display(flab)
+
+outputs
+
+    <flab.Flab.Flab object at 0x7fafde453fa0>
+
+and
+
+    >display(flab.tasks)
+
+outputs
+
+    {'ConsoleUiProcess': <Projects.Console.Tasks.ConsoleUiProcess.Task object at 0x7f88dbd68ac0>,
+    'ConsoleFlabProcess': <Projects.Console.Tasks.ConsoleFlabProcess.Task object at 0x7f88dbd68c10>, 
+    'HelloWorld': <Projects.Console.Tasks.HelloWorld.Task object at 0x7f88dbd5f850>}
+
+## Quick Start
+
+To quickly get started with flab using Console:
+
+1. Install flab using pip
+2. Install flab-console using pip
+3. Create a Projects directory
+4. Create the following script and run:
+
+
+    from flab-console.Boot import Console
+    Console.boot()
 
 ## Directory structure
 Before beginning any project with Flab, the working directory must be set up properly.
 The working directory has the following structure. All projects are stored in the "Projects" folder. Any other code 
-(such as a custom flab distribution) or data can also be kept in this working directory.
+ or other files can also be kept in this working directory.
 
     Working_directory/
     
@@ -87,17 +148,11 @@ A project directory has the following structure:
 
     ├ Devices/
     
-    │  ├ Drivers/ 
-    
-    │  └ Protocols/
-    
     ├ UIs/
-    
-    │  ├ Actions/ 
-    
-    │  └ Designs/
 
-    │  └ Windows/
+    ├ Models/
+
+    └ Data/
 
 
 A project directory may be automatically created using flab's create_project_directory() method
@@ -109,50 +164,46 @@ A Flab object acts as a space for the shared storage of:
 2. tasks (in the tasks dictionary)
 3. variables (in the vars dictionary), 
 4. modules (in the modules dictionary)
+5. user interfaces (in the uis dictionary)
+6. models (in the models dictionary)
+7. data (in the data dictionary)
 
-The Flab class inherits DeviceManager, TaskManager and UiManager, such that methods in those classes may be easily 
-customized. These managers contain methods for manipulating devices, tasks and ui's.
-
-A Flab object can also be created with optional queues to enable communication with a user interface (the "ui_queue") and a 
-machine ("flab_queue"), which are None by default. Messages from flab can also be output to the terminal/command line with the 
-boolean "print_status"
-
-Example usage: Creating flab without queues and not printing to the command line/terminal
-
-    from flab import Flab
-    flab = Flab.Flab(print_status = False)
+The Flab class inherits DeviceManager, TaskManager, UiManager, ModelManager and DataManager, such that methods in those classes may be easily 
+customized. These managers contain methods for manipulating devices, tasks, ui's, models and data.
 
 ## Tasks
 
 Tasks are essentially routines or programs, which can be run in a variety of fashions depending on user input. Task files
 are saved as python files with the Tasks folder of a project.
 
+To run a Task in Flab Console, each Task should inherit the TaskTemplate. This is provided in the Templates module.
+
+
+
+Each task requires two attributes:
+
+1. task_name: a string that matches the filename
+2. task_type: a string that determines how the task is run. Either "thread", "asyncio" or "process"
+
+Each task requires two methods:
+
+1. run: this is called when flab.start_task is called. This method can contain while loops, which
+       can be externally closed with the flag task_stopped.
+2. stop: this is called when flab.stop_task is called. This method can be used to modify the a flag to stop the task 
+or to run a shut-down procedure.
+
 Tasks must be first loaded into flab with the load_task(task_name) method. They may then be started or stopped using the 
 start_task(task_name, *args, **kwargs) and stop_task(task_name, *args, **kwargs) methods.
-
+Multiple tasks can be loaded simulataneously with the flab.load_tasks method. All the tasks in a given project can be loaded 
+using flab.load_all_tasks(). Tasks can also be dynamically reloaded by using the reload_task and reload_tasks 
+methods. All tasks may be stopped in one line with the command "flab.stop_all_tasks()". Task objects do not have publicly accessible
+attributes.
 Example usage:
 
     flab.load_task('HelloWorld')
     flab.start_task('HelloWorld')
     flab.stop_task('HeloWorld')
-
-Multiple tasks can be loaded simulataneously with the flab.load_tasks method. All the tasks in a given project can be loaded 
-using flab.load_all_tasks(). Tasks can also be dynamically reloaded by using the reload_task and reload_tasks 
-methods. All tasks may be stopped in one line with the command "flab.stop_all_tasks()". Task objects do not have publicly accessible
-attributes.
-
-Each task requires three attributes:
-1. task_name: a string that matches the filename
-2. task_type: a string that determines how the task is run. Either "thread", "asyncio" or "process"
-3. task_stopped: a Boolean flag indicating if the task has been stopped.
-
-Each task requires three methods:
-
-1. __ init __(self, flab): initializes the Task object with the shared flab space
-2. run(self, *args, **kwargs): this is called when flab.start_task is called. This method can contain while loops, which
-       can be externally closed with the flag task_stopped.
-3. stop(self, *args, **kwargs): this is called when flab.stop_task is called. This method can be used to modify the task_stopped
-   flag
+    flab.reload_task()
 
 ###Threaded Tasks
 
@@ -162,32 +213,67 @@ for a more detailed description.
 
 Threaded Task Example:
 
-    #HelloWorld continuously prints 'HelloWorld' every second until stopped
-
+    #Import the required libraries
     import time
-    class Task():
     
+    #Import the task template from flab.Templates
+    from flab.Templates import TaskTemplate
+    
+    #Create the Task class, inheriting TaskTemplate.Task
+    class Task(TaskTemplate.Task):
+    
+        #Define the name of the task. This should match the filename
         task_name = 'HelloWorld'
+    
+        #Define the type of the task. This is either 'thread' , 'process' or 'asyncio'
         task_type = 'thread'
-        task_stopped = False
     
-        def __init__(self,flab):
-            self.flab = flab
+        #Define the descriptions of each argument being entered into the task (optional)
+        argument_descriptions = {'optional_argument': 'an optional argument',
+                                 'mandatory_argument': 'a mandatory argument'}
     
-        def run(self):
-            self.task_stopped = False
-            while not self.task_stopped:
-                print('Hello World')
-                time.sleep(1)
+        #define the run method, with any necessary and optional arguments (i.e. args, kwargs)
+        def run(self, mandatory_argument, optional_argument = 'optional argument'):
+            try:
     
+                #print out Hello World + the mandatory argument in the system command line/terminal
+                print('1. Hello World: ' + str(mandatory_argument))
+    
+                #display Hello World + the mandatory argument in the console command line
+                self.flab.display('2. Hello World: ' + str(mandatory_argument) + ' ' + str(optional_argument))
+    
+                #create a shared variable called 'World' with the value 'Hello'
+                self.flab.add_var('Hello', 'World')
+    
+                #display the shared variable called 'World' in the console command line
+                self.flab.vars['count'] = 0
+                self.flab.display('3. ' + str(self.flab.vars['count']))
+    
+                #create a shared variable called 'HelloWorld_stopped' with the value False
+                self.flab.vars['HelloWorld_stopped'] = False
+    
+                #while the variable 'HelloWorld_stopped' is False, loop over a section of code
+                while not self.flab.vars['HelloWorld_stopped']:
+                    #display 'Hello World' + mandatory argument in the console
+                    self.flab.display('4. Hello World: ' + str(mandatory_argument))
+                    #sleep for a second
+                    time.sleep(1)
+            except Exception as e:
+                self.flab.display('Error in HelloWorld')
+                self.flab.display(e)
+            finally:
+                pass
+    
+        #define the method to be called when the task is stopped
         def stop(self):
-            self.flab.tasks['HelloWorld'].task_stopped = True
-
+            #set the variable 'HelloWorld_stopped' to True
+            self.flab.vars['HelloWorld_stopped'] = True #a flag to stop the script
 
 ###Asyncio Tasks
 
 An asynchronous task can be used to make running some routines more efficient. This utilizes
-python's asyncio library.
+python's asyncio library. Asyncio tasks run in an asyncio loop, which is started by running flab.start_asyncio_loop().
+Flab Console automatically starts the asyncio loop upon startup.
 
 An asyncio task has several key differences to a threaded task:
 1. the asyncio library must be imported
@@ -203,146 +289,52 @@ An asyncio task has several key differences to a threaded task:
 
     await asyncio.sleep(seconds)
 
-Asyncio Task Example 1:
+Asyncio Task Example:
 
-    #This task prints Hello World continuously, every second, until stopped.
-
+    from flab.Templates import TaskTemplate
     import asyncio
-    class Task():
     
-        task_name = 'HelloWorldAsyncio'
+    class Task(TaskTemplate.Task):
+    
+        task_name = 'HelloWorld_asyncio'
         task_type = 'asyncio'
         task_stopped = False
-    
-        def __init__(self,flab):
-            self.flab = flab
+        argument_descriptions = {'optional_argument': 'an optional argument', 'mandatory_argument': 'a mandatory argument'}
     
         async def run(self):
-            self.task_stopped = False
-            while not self.task_stopped:
-                print('Hello World')
-                await asyncio.sleep(1)
-    
-        async def stop(self):
-            self.flab.tasks['HelloWorldAsyncio'].task_stopped = True #a flag to stop the script
-
-There are two ways to run multiple asyncio tasks simultaneously. The first requires the definition of multiple asyncio
-functions within one task. If this is done, the functions must be gathered at the end of the run method, as seen in the example
-below.
-
-    #This task runs two counting tasks asynchronously. 
-    #A flab variable "count" is used for counting.
-    #count() adds one to the count
-    #count2() adds two to the count
-    #when run correctly, the Python console should print multiples of three
-
-    import asyncio
-    class Task():
-    
-        task_name = 'CountAsyncio'
-        task_type = 'asyncio'
-        task_stopped = False
-    
-        def __init__(self,flab):
-            self.flab = flab
-    
-        async def run(self):
-            self.task_stopped = False
-            self.flab.add_var(0, 'count')
-            async def count():
-                while not self.task_stopped:
-                    self.flab.vars['count'] = self.flab.vars['count'] + 1
+            try:
+                self.flab.vars['HelloWorld_asyncio_stopped'] = False # a flag to stop the script
+                # loop the display of 'Hello World' until the user stops the task.
+                while not self.flab.vars['HelloWorld_asyncio_stopped']:
+                    self.flab.display('Hello World')
                     await asyncio.sleep(1)
-                    print(self.flab.vars['count'])
-            async def count2():
-                while not self.task_stopped:
-                    self.flab.vars['count'] = self.flab.vars['count'] + 2
-                    await asyncio.sleep(1)
-            await asyncio.gather(count(),count2())
+            except Exception as e:
+                self.flab.display('Error in ' + self.task_name)
+                self.flab.display(e)
     
         async def stop(self):
-            self.flab.tasks['scratch'].task_stopped = True #a flag to stop the script
+            self.flab.vars['HelloWorld_asyncio_stopped'] = True #a flag to stop the script
+            self.flab.display('HelloWorld_asyncio stopped')
 
-In the second manner, two separate asyncio tasks may be defined separately. However, both tasks must be called simultaneously
-using flab.start_asyncio_tasks(task_names), where task_names is a list of the task names
-   
-Example: AsyncCount
- 
-    #This task runs one counting task asynchronously. 
-    #A flab variable "count" is used for counting.
-    #This task increases the count by one and prints the current count value
-
-    import asyncio
-
-    class Task():
-
-        task_name = 'AsyncCount'
-        task_type = 'asyncio'
-        task_stopped = False
-    
-        def __init__(self,flab):
-            self.flab = flab
-    
-        async def run(self):
-            self.task_stopped = False
-            self.flab.add_var(0, 'count')
-            while not self.task_stopped:
-                self.flab.vars['count'] = self.flab.vars['count'] + 1
-                await asyncio.sleep(1)
-                print(self.flab.vars['count'])
-    
-        async def stop(self):
-            self.flab.tasks['AsyncCount'].task_stopped = True #a flag to stop the script
-
-Example: AsyncCount2
-
-    #This task runs one counting task asynchronously. 
-    #A flab variable "count" is used for counting.
-    #This task increases the count by two
-
-    import asyncio
-
-    class Task():
-    
-        task_name = 'AsyncCount2'
-        task_type = 'asyncio'
-        task_stopped = False
-    
-        def __init__(self,flab):
-            self.flab = flab
-    
-        async def run(self):
-            self.task_stopped = False
-            while not self.task_stopped:
-                self.flab.vars['count'] = self.flab.vars['count'] + 2
-                await asyncio.sleep(1)
-    
-        async def stop(self):
-            self.flab.tasks['AsyncCount2'].task_stopped = True #a flag to stop the script
-
-Example: Running and stopping AsyncCount and AsyncCount2
-
-    flab.load_tasks(['AsyncCount','AsyncCount2'])
-    flab.start_asyncio_tasks(['AsyncCount','AsyncCount2'])
-    flab.stop_asyncio_tasks(['AsyncCount','AsyncCount2'])
 
 ###Process Tasks
 
 Process tasks are executing using Python's multiprocessing library, meaning that they are distributed across different CPUs.
-This distribution makes the sharing of data i.e. flab slightly more complicated.
+This distribution makes the sharing of data i.e. flab slightly more complicated. A process would be used if the task is CPU bound,
+or if the task needs to run as the parent process, such as GUI applications.
 
 A process task has several key differences to a threaded task:
 1. task_type = 'process'
-2. The flag boolean used to stop a loop should be defined as a flab variable instead of a task variable
 
 Process Example:
 
+    from flab.Templates import TaskTemplate
 
     #This task prints 'Hello World' every second within a separate process
     #A flab variable self.flab.vars['HelloWorldProcess_stopped'] is used instead of a Boolean flag within the Task so that external 
     other processes can signal this process to stop
 
-    class Task():
+    class Task(TaskTemplate.Task):
 
         task_name = 'HelloWorldProcess'
         task_type = 'process'
@@ -373,122 +365,26 @@ Example: Loading, starting and stopping process tasks
 Device classes are representations of physical laboratory devices. For example - a balance would become BalanceDevice,
 or a hot plate would become HotPlateDevice.
 
-To digitally represent the properties and actions of a device we provide the following abstraction:
+To digitally represent the properties and actions of a device, this can include:
 
 1. How a computer digitally communicates with the device, explicitly defined in the Driver class.
 2. How a device is used within a given task, explicitly defined in the Protocol class.
 3. The specific configuration of the device, explicitly defined in the Device class.
 
-The Device class inherits Driver and Protocol classes. Methods for drivers and/or protocols may already be provided by
-the device manufacturer or third parties. If these are provided in python, they may be used in place of a user-defined
-driver or protocol class by using python's import function.
-
 Device class files are saved in the Devices folder of a given project.
 
-A Device class has two key requirements:
-1. device_name: a string matching the filename
-2. an __ init __ method that does not take any input arguments
-3. the method set_flab() which passes a flab object/reference to a device
+A Device class must be defined with the following attribute:
+1. device_name: a string matching the filename 
 
-Example: DeviceTemplate
-
-    from flab.Templates import DriverTemplate
-    from flab.Templates import ProtocolTemplate
-    import inspect
-    
-    class Device(DriverTemplate.Driver, ProtocolTemplate.Protocol):
-    
-        device_name = 'DeviceTemplate'
-        protocol_name = 'ProtocolTemplate'
-        driver_name = 'DriverTemplate'
-        version = '2.0.1'
-    
-        def __init__(self):
-            self.device_name = 'DeviceTemplate'
-            self.protocol_name = 'ProtocolTemplate'
-            self.driver_name = 'DriverTemplate'
-    
-        #returns the value of a Device attribute
-        def get(self, attribute_name):
-            return self.__getattribute__(attribute_name)
-    
-        #sets the value of a Device attribute
-        def set(self, attribute_name, value):
-            self.__setattr__(attribute_name, value)
-    
-        #returns the name of a Device
-        def get_device_name(self):
-            return self.device_name
-    
-        #sets the name of a Device
-        def set_device_name(self, device_name):
-            self.device_name = device_name
-    
-        #returns the flab object of a Device
-        def get_flab(self):
-            return self.flab
-    
-        #sets the flab object of a Device
-        def set_flab(self, flab):
-            self.flab = flab
-    
-        #returns the attributes of a Device in a list
-        def list_attributes(self):
-            variables = []
-            for i in inspect.getmembers(self):
-                if not inspect.ismethod(i[1]) and not inspect.ismethoddescriptor(i[1]) and not inspect.isbuiltin(i[1]) and not '__' in i[0]:
-                    variables.append(i[0])
-            return variables
-    
-        #returns the methods of a Device in a list
-        def list_methods(self):
-            variables = []
-            for i in inspect.getmembers(self):
-                if inspect.ismethod(i[1]) and not inspect.ismethoddescriptor(i[1]) and not inspect.isbuiltin(i[1]) and not '__' in i[0]:
-                    variables.append(i[0])
-            return variables
-    
-        #returns the arguments of a method of a Device in a list
-        def list_method_args(self,method_name):
-            fullargspec = inspect.getfullargspec(self.get(method_name))
-            return fullargspec
-
-The Device class is primarily used for defining any configuration parameters that are specific to given use-case.
-For example, the below Device class for controlling hotplates is used to specify default temperatures
-
-Example: IkaDefaultsDevice
-
-    #A Device class for IKA RCT Digital hotplates
-    
-    from Projects.Working.Devices.Drivers import IkaDriver
-    from Projects.Working.Devices.Protocols import IkaProtocol
-    
-    class Device(IkaDriver.Driver, IkaProtocol.Protocol):
-    
-        device_name = 'IkaDefaultsDevice'
-    
-        #Default parameters
-        default_temperature = 100
-    
-        def __init__(self):
-            pass
-    
-        def set_default_temperature(self, new_default):
-            self.default_temperature = new_default
-    
-        def get_default_temperature(self):
-            return self.default_temperature
+The Device class should also inherit from flab.Templates, DeviceTemplate.Device, to run properly in Console.
 
 Use the flab method "load_device" to load a given device into the flab devices dictionary.
 This dictionary can then be used to call upon device properties and functions.
 
 Example: loading and using device
 
-    flab.load_device('DeviceTemplate')
-    flab.devices['DeviceTemplate'].hello_world()
-
-    flab.load_device('IkaDefaultsDevice')
-    flab.devices['IkaDefaultsDevice'].set_default_temperature(50)
+    flab.load_device('ExampleDevice')
+    flab.devices['ExampleDevice'].set_default_temperature(50)
 
 If a change has been made to the ExampleDevice class, the device module may be dynamically reloaded
 into flab.
@@ -496,64 +392,32 @@ into flab.
 Example: reloading and using device
 
     flab.reload_device('ExampleDevice')
-    flab.devices['ExampleDevice'].example_function()
+    flab.devices['ExampleDevice'].set_temperature(50)
 
-###Drivers
+To get or change the attributes of a device, one should use the 'get' and 'set' methods.
 
-Unlike a Task, a Driver has relatively fewer requirements. A Driver must define:
+Example:
 
-1. driver_name: a string matching the filename
-2. an __ init __ method that does not accept any arguments
+    temperature = flab.devices['ExampleDevice'].get('setpoint_temperature')
+    flab.devices['ExampleDevice'.set('setpoint_temperature',5)
 
-Any other methods and variables are given by the programmer. A certain degree of expertise in digital communication is 
-required to program drivers, which is not covered in this guide.
-
-Example: DriverTemplate
-    
-    class Driver():
-    
-        driver_name = 'DriverTemplate'
-        version = '2.0.1'
-    
-        def __init__(self):
-            pass
-    
-        #returns the value of a Driver attribute
-        def get(self, attribute_name):
-            return self.__getattribute__(attribute_name)
-    
-        #sets the value of a Driver attribute
-        def set(self, attribute_name, value):
-            self.__setattr(attribute_name, value)
-    
-        #returns the name of a Driver
-        def get_driver_name(self):
-            return self.driver_name
-    
-        #sets the name of a Driver
-        def set_driver_name(self, driver_name):
-            self.driver_name = driver_name
-
-
-Some equipment providers or third parties already provide drivers in python, which can be adapted. Below is a Driver
+Some equipment providers or third parties already provide drivers in python, which can be adapted. Below is a Device
 used for collecting data from Arduino Mega controllers using the pyfirmata library. 
 
-Example: ArduinoMegaDriver
+Example: ArduinoMegaDevice
     
     #A class for driving Arduino Mega using the pyfirmata library (https://pypi.org/project/pyFirmata/)
 
     from pyfirmata import Arduino, util, ArduinoMega
+    from flab.Templates import DeviceTemplate
 
-    class Driver(ArduinoMega):
+    class Device(ArduinoMega, DeviceTemplate.Device):
     
         port = 'NA'
         is_arduino_connected = False
         print_status = True
         driver_name = 'ArduinoMegaDriver'
         mega = {'digital': tuple(x for x in range(56)),'analog': tuple(x for x in range(16)),'pwm': tuple(x for x in range(2, 14)),'use_ports': True,'disabled': (0, 1, 14, 15)}
-    
-        def __init__(self):
-            pass
     
         #set the communication port
         def set_port(self,port):
@@ -601,20 +465,21 @@ Example: ArduinoMegaDriver
                 pass
             return v
 
-Sometimes, it is necessary to completely define a driver from scratch. For serial communication, python's serial 
-library can be used to create methods for communication. Below is an example of a Driver that defines serial communication
-functions, and can be inherited by other drivers.
+Sometimes, it is necessary to completely define a device from scratch. For serial communication, python's serial 
+library can be used to create methods for communication. Below is an example of a Device that defines serial communication
+functions, and can be inherited by other devices.
 
-Example: SerialDriver
+Example: SerialDevice
 
-    #A generic class for drivers using serial communication.
+    #A generic class for devices using serial communication.
 
     import serial
     import time
+    from flab.Templates import DeviceTemplate
 
-    class Driver():
+    class Device(DeviceTemplate.Device):
     
-        driver_name = 'SerialDriver'
+        device_name = 'SerialDevice'
     
         #default parameters
     
@@ -712,19 +577,21 @@ Example: SerialDriver
                 print(e)
                 return ''
 
-Below is an example of a driver for a hotplate that inherits the SerialDriver class to facilitate digital communications.
+Below is an example of a device for a hotplate that inherits the SerialDevice class to facilitate digital communications.
 Serial commands for communication can often be found in the manuals of equipment.
 
 Example: IkaDriver
 
     #A class for driving IKA RCT digital hotplate
 
-    from Projects.Example.Devices.Drivers import SerialDriver
+    from Projects.Example.Devices import SerialDevice
 
-    class Driver(SerialDriver.Driver):
+    class Driver(SerialDevice.Device):
     
-        driver_name = 'IkaDriver'
+        device_name = 'IkaDevice'
     
+        con_status = False  # is IKA connected (serial port)
+        ini_status = False  # is IKA initialized
         port = 'NA'
         #ASCII character at the beginning of a transmission
         beg_char = '/'
@@ -734,9 +601,6 @@ Example: IkaDriver
         pause_time = 0.1
         bd = 9600
         to = 1
-    
-        def __init__(self):
-            super().__init__()
     
         def read_name(self):
             s = 'IN_NAME'
@@ -827,60 +691,6 @@ Example: IkaDriver
             s = 'OUT_WD2@m' + str(m)
             r = self.write(s)
 
-###Protocols
-
-A Protocol class provides higher level functions that define the actions a device will take in a project. Protocols
-will often utilize the functions defined in a given Driver class. It is good practice to note which Driver class a 
-Protocol is compatible with.
-
-A protocol requires:
-1. protocol_name: a string matching the filename
-2. an __ init __ method that does not accept any arguments
-
-Example: ProtocolTemplate
-
-    class Protocol():
-    
-        protocol_name = 'ProtocolTemplate'
-        version = '2.0.1'
-    
-        def __init__(self):
-            pass
-    
-        #returns the value of a Protocol attribute
-        def get(self, attribute_name):
-            return self.__getattribute__(attribute_name)
-    
-        #sets the value of a Protocol attribute
-        def set(self, attribute_name, value):
-            self.__setattr(attribute_name, value)
-    
-        #returns the name of a Protcol
-        def get_protocol_name(self):
-            return self.protocol_name
-    
-        #sets the name of a Protocol
-        def set_protocol_name(self, protocol_name):
-            self.protocol_name = protocol_name
-
-Protocols can also define how a given device is initialized, and how the user may interact with the device. For example
-in the below protocol for hotplates, additional code is given to ensure a robust connection and startup of the device.
-
-Example: IkaProtocol
-
-    #A class for IKA RCT Digital hotpolate protocols
-
-    class Protocol():
-    
-        protocol_name = 'IkaProtocol'
-        print_status = True
-    
-        con_status = False  # is IKA connected (serial port)
-        ini_status = False  # is IKA initialized
-    
-        def __init__(self):
-            pass
-    
         def connect(self):
             con_err = ""
             if self.get_port() == 'NA':
@@ -926,7 +736,7 @@ Example: IkaProtocol
             if self.printstatus:
                 self.flab.display(s)
 
-Finally, designing a task which utilizes a device requires correct usage of the underlying Device, Driver and Protocol
+Finally, designing a task which utilizes a device requires correct usage of the underlying Device
 classes. See below the task "LoadStartIka", which automatically loads, initializes and starts a hotplate.
 
 Example: LoadStartIka
@@ -937,183 +747,302 @@ Example: LoadStartIka
     
         task_name = 'LoadStartIka'
         task_type = 'thread'
-        task_stopped = False
-    
-        #initialize all tasks with a flab object.
-        def __init__(self, flab):
-            self.flab = flab
     
         #method called when task is run
         def run(self):
-            self.task_stopped = False
             load_err = ''
             try:
+                self.flab.vars['LoadStartIka_stopped'] = False
                 #load the device into flab
-                self.flab.load_device('IkaDefaultsDevice')
-                p = self.flab.devices['IkaDefaultsDevice']
+                self.flab.load_device('IkaDevice')
+                p = self.flab.devices['IkaDevice']
                 #set the device port
                 p.set_port('/dev/tty.usbmodem7_____SM96_s_Q1')
                 #set the device temperature
-                p.set_temperature(p.default_temperature)
+                p.set_temperature(50)
                 #start the heater
                 p.start_heater() 
             except Exception as e:
-                load_err = 'Error loading and starting IkaDefaultsDevice'
+                load_err = 'Error loading and starting IkaDevice'
                 self.flab.ui.print(load_err)
                 self.flab.ui.print(e)
             finally:
                 pass
             if load_err == '':
-                self.flab.ui.print('IkaDefaultsDevice loaded and started successfully')
+                self.flab.ui.print('IkaDevice loaded and started successfully')
     
         def stop(self):
-            self.task_stopped = True
-            self.flab.devices['IkaDefaultsDevice'].start_heater() 
+            self.set_temperature(25)
+            self.flab.vars['LoadStartIka_stopped'] = True 
 
 ## UIs
 
 UIs are classes that govern how users (humans or otherwise) interact with running programs. The most common UI is graphical
 (a GUI). A UI can be thought of as a hybrid between a Device and a Task. UI classes are saved in the UIs folder of a project.
+The Ui class should also inherit from flab.Templates, UiTemplate.Ui, to run properly in Console.
 
-Each UI requires the following:
+Each UI requires the following attributes and methods:
 
-1. ui_name: a string that matches the filename
-2. __ init __(self, flab): initializes the UI object with the shared flab object
-3. run(self, *args, **kwargs): this defines how a ui runs. This method can contain while loops, which
-       can be externally closed with the flag task_stopped.
-4. stop(self, *args, **kwargs): this defines how a ui stops. This method can be used to modify a ui_stopped
-   flag
+1. ui_name: an attribute that is a string that matches the filename
+3. run: this method defines how a ui runs. This method can contain while loops, which
+       can be externally closed with a user defined flag
+4. stop: this method defines how a ui stops. This method can be used to modify a user defined flag
    
-UIs inherit classes stored in the Designs and Actions folders, which describe the layout of the UI and the corresponding
+UIs contain functions and attributes that describe the layout of the UI and the corresponding
 actions of the UI elements respectively.
 
-In HelloWorldUI, the UI class inherits the Ui_MainWindow class of HelloWorldDesign and the Actions class of HelloWorldActions.
-The HelloWorldUI run method uses PyQt5 to create a window (QtWidgets.QMainWindow) to run in.
-Note: GUI libraries typically run within the main method. If you wish to start multiple UIs or to run a UI in a separate task,
-it is best to create a separate process task for running the UI.
+In HelloWorldUI, the UI class uses Tkinter 
 
-Example: HelloWorldUI
+Example: HelloWorldTkinterUi.py
     
-    #A GUI for HelloWorld
-
-    from Projects.Example.UIs.Designs import HelloWorldDesign
-    from Projects.Example.UIs.Actions import HelloWorldActions
-    from PyQt5 import QtWidgets
-
-    import sys
-
-    class UI(HelloWorldDesign.Ui_MainWindow, HelloWorldActions.Actions):
+    import tkinter as tk
+    from flab.Templates import UiTemplate
     
-        ui_name = 'HelloWorldUI'
+    class Ui(UiTemplate.Ui):
     
-        def __init__(self, flab):
-            self.flab = flab
+        ui_name = 'HelloWorldTkinterUi'
     
-        #The method responsible for starting the UI
+        def __init__(self):
+            self.window = None
+    
         def run(self):
-            app = QtWidgets.QApplication(sys.argv)
-            self.MainWindow = QtWidgets.QMainWindow()
-            self.setupUi(self.MainWindow)
-            self.configure_actions()
-            self.MainWindow.show()
-            app.exec_()
+            # Create a new tkinter window
+            self.window = tk.Tk()
+            # Set a variable name
+            self.flab.vars.update({'Hello':'World'})
+            # Set the window title to a variable value
+            self.window.title(str(self.flab.vars['Hello']))
+            # Create a label widget to display the text
+            self.label = tk.Label(self.window, text="Hello, World!")
+            # Pack the label widget into the window
+            self.label.pack()
+            # Start the tkinter event loop
+            self.window.mainloop()
     
-    
-        #The method responsible for stopping the UI
         def stop(self):
             pass
 
-UIs may be loaded into flab with the flab method load_ui(ui_name)
 
-    flab = Flab.Flab()
+UIs may be loaded into flab with the flab method load_ui(ui_name).
+
+The run and stop methods of the UIs may be accessed with 'start_ui' and 'stop_ui' methods from flab.
+We recommend that UIs should normally be closed using the window itself rather than programmatically through the
+'stop' method. Rather, this should be used as a flag to stop other running classes and run shutdown routines.
+
     flab.load_ui('HelloWorldUi')
-    flab.uis['HelloWorldUi'].run()
+    flab.start_ui('HelloWorldUi')
+    flab.stop_ui('HelloWorldUi')
 
-###Designs
+## Data
 
-Design classes may be created by a range of methods - by directly coding, using libraries such as Tkinter, or through applications
-like QtDesigner. Design class files are stored in the Designs folder. 
-*.ui files can be converted to *.py files automatically using the function convert_ui(ui_name), which is defined in UiManager.
+Data classes contain attributes and methods for accessing stored data. It is important to note that Data classes
+do not store data themselves. Data is primarily stored by accessing flab variables, either writing to them or reading from them.
 
-Example: .ui to .py conversion.    
+Each Data class requires the following attributes and methods:
+1. data_name: an attribute that is a string that matches the filename
+2. update_variable: a method that describes how variables are updated from stored data.
+3. update_file: a method that describes how a files, databases, etc. are updated from a flab variable.
 
-    flab = Flab.Flab()
-    flab.convert_ui(''HelloWorldUi')
+For example: JsonDataExample, a class which access data in a json formatted file, with a flab variable named 'json_data'
 
-Example: HelloWorldDesign
-
-    # -*- coding: utf-8 -*-
-
-    # Form implementation generated from reading ui file '/Users/nicholasjose/Dropbox (Cambridge CARES)/Python/pyflab/Projects/Working/UIs/Designs/HelloWorldDesign.ui'
-    #
-    # Created by: PyQt5 UI code generator 5.15.4
-    #
-    # WARNING: Any manual changes made to this file will be lost when pyuic5 is
-    # run again.  Do not edit this file unless you know what you are doing.
-
-    from PyQt5 import QtCore, QtGui, QtWidgets
-     
-    class Ui_MainWindow(object):
-        def setupUi(self, MainWindow):
-            MainWindow.setObjectName("MainWindow")
-            MainWindow.resize(1068, 716)
-            self.centralwidget = QtWidgets.QWidget(MainWindow)
-            self.centralwidget.setObjectName("centralwidget")
-            self.label = QtWidgets.QLabel(self.centralwidget)
-            self.label.setGeometry(QtCore.QRect(390, 330, 91, 16))
-            self.label.setObjectName("label")
-            self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-            self.pushButton.setGeometry(QtCore.QRect(370, 360, 113, 32))
-            self.pushButton.setObjectName("pushButton")
-            MainWindow.setCentralWidget(self.centralwidget)
-            self.statusbar = QtWidgets.QStatusBar(MainWindow)
-            self.statusbar.setObjectName("statusbar")
-            MainWindow.setStatusBar(self.statusbar)
+    from flab.Templates import DataTemplate
+    import os
+    import json
     
-            self.retranslateUi(MainWindow)
-            QtCore.QMetaObject.connectSlotsByName(MainWindow)
+    class Data(DataTemplate.Data):
     
-        def retranslateUi(self, MainWindow):
-            _translate = QtCore.QCoreApplication.translate
-            MainWindow.setWindowTitle(_translate("MainWindow", "Hello World"))
-            self.label.setText(_translate("MainWindow", "Hello What?"))
-            self.pushButton.setText(_translate("MainWindow", "Click me"))
-
-
-###Actions
-
-Action classes are used to define the actions that a UI undertakes after events. For example, in HelloWorldDesign,
-to define what happens after pushButton is clicked.
-Actions are defined in separate classes to enable programmers to easily change actions without affecting the UI's design,
-and vice versa.
-
-Each Actions class is defined with:
-1. actions_name: a string matching the class filename
-2. an __ init __ function that accepts a flab object as an input.
-
-In the below example, upon clicking pushButton, defined within HelloWorldDesign, the test of label, also defined with 
-HelloWorldDesign, displays "Hello World"
-
-Actions Example:
-
-    #Hello World UI Actions
-
-    class Actions():
+        data_name = 'JsonDataExample' #name of the data object
     
-        actions_name = 'HelloWorldActions'
+        file_path = os.getcwd() + '\\Files\\example.json' # path of the file
+        variable_names = ['json_data']  # names of variables that are stored
     
-        def __init__(self, flab):
-            self.flab = flab
+        def update_variable(self):
+            """
+            reads the json from the file path and coverts to a dictionary, and updates the variables dictionary
     
-        def configure_actions(self):
-            self.pushButton.clicked.connect(self.hello_world)
+            Example:
     
-        def hello_world(self):
-            self.label.setText('Hello World')
+                json:
+                {
+                    "a": [
+                        1,
+                        2,
+                        3
+                    ]
+                }
+    
+                variables:
+                {'a': [1, 2, 3]}
+    
+            :returns: None
+            """
+            try:
+                with open(self.file_path, 'r') as file:
+                    data_dict = json.load(file)
+                    self.flab.vars.update(data_dict)
+    
+            except Exception as e:
+                self.flab.display('Error in updating variable of ' + self.data_name)
+                self.flab.display(e)
+    
+            finally:
+                pass
+    
+        def update_file(self):
+            """
+            Updates the json file with the values of the variables
+    
+            Example:
+    
+                variables:
+                {'a': [1, 2, 3]}
+    
+                json:
+                {
+                    "a": [
+                        1,
+                        2,
+                        3
+                    ]
+                }
+    
+            """
+    
+            try:
+                # get the sub-dictionary of variables to write
+                subset_dict = {key: self.flab.vars[key] for key in self.variable_names}
+                with open(self.file_path, 'w') as file:
+                    json.dump(subset_dict, file, indent=4)
+    
+            except Exception as e:
+                self.flab.display('Error in updating file of ' + self.data_name)
+                self.flab.display(e)
+    
+            finally:
+                pass
+
+To use a Data object's methods, use the flab methods 'update_data_variable' and 'update_data_file', for example:
+
+    flab.update_data_variable('JsonDataExample')
+    flab.update_data_file('JsonDataExample')
+
+Data classes can be loaded nad reloaded like all other objects, for example:
+
+    flab.load('JsonDataExample')
+    flab.reload('JsonDataExample')
+
+## Model
+
+Model classes represent attributes and methods for creating, training, running and evaluating models.
+These Model classes can be used for a wide range modelling activities, from digital twins to machine learning models.
+
+Each Model class requires the following attributes and methods:
+1. model_name: this attribute is a string that matches the filename
+2. train_model: this method describes how the model is trained.
+3. predict_model: this method describes how a model makes a prediction
+4. evaluate_model: this method describes how a model is evaluated, for example, goodness of fit
+
+For example: LinearModelExample, a class which applies a linear regression model to a dataset (x and y).
+
+    from flab3.Templates import ModelTemplate
+    from sklearn.metrics import mean_squared_error, r2_score
+    from sklearn.model_selection import cross_val_predict
+    from sklearn.linear_model import LinearRegression
+    
+    class Model(ModelTemplate.Model):
+    
+        model_name = 'LinearModelExample' #name of the data object
+        x = [[1], [2], [3]] # x data
+        y = [1.1,2.4,3.8] # y data (actual)
+        cross_validation_folds = 3 # number of cross-validation folds for evaluation
+    
+        def initialize(self):
+            """
+            Create a LinearRegression model.
+    
+            :returns: None
+            """
+    
+            self.model = LinearRegression()
+    
+        def train(self):
+            """
+            Fits the data to a line
+    
+            :returns: None
+            """
+            try:
+                # Fit the model to the training data
+                self.model.fit(self.x, self.y)
+    
+            except Exception as e:
+                self.flab.display('Error in training of ' + self.model_name)
+                self.flab.display(e)
+    
+            finally:
+                pass
+    
+    
+        def predict(self, x_values):
+            """
+            Makes a model prediction with given x values
+    
+            :returns: predicted y values
+            :rtype: list
+            """
+            try:
+                y_prediction = []
+                x_values = [[value] for value in x_values]
+                y_prediction = self.model.predict(x_values)
+                self.flab.display(y_prediction)
+    
+            except Exception as e:
+                self.flab.display('Error in prediction of ' + self.model_name)
+                self.flab.display(e)
+    
+            finally:
+                return y_prediction
+    
+        def evaluate(self):
+            """
+            Evaluates the model accuracy in terms of mean squared error and R^2.
+    
+            :returns: mean squared error, R^2 value
+            :rtype: tuple
+            """
+            try:
+                model_mean_squared_error = -1
+                model_r2 = -1
+    
+                # Perform cross-validation
+                y_predicted = cross_val_predict(self.model, self.x, self.y, cv=self.cross_validation_folds)
+    
+                # Calculate performance metrics
+                model_mean_squared_error = mean_squared_error(self.y, y_predicted)
+                model_r2 = r2_score(self.y, y_predicted)
+    
+            except Exception as e:
+                self.flab.display('Error in training of ' + self.model_name)
+                self.flab.display(e)
+    
+            finally:
+                return model_mean_squared_error, model_r2
+
+To use a Model's methods, use the flab methods 'train', 'predict' and 'evaluate' for example:
+
+    flab.train_model('JsonDataExample')
+    flab.update_data_file('JsonDataExample')
+
+Data classes can be loaded nad reloaded like all other objects, for example:
+
+    flab.load('JsonDataExample')
+    flab.reload('JsonDataExample')
 
 ## Boot
 
-Boot scripts are used to start programs. The BootManager class implements Python's multiprocessing SyncManager class to
+Boot scripts are advanced scripts used to start programs. If you are using Console, there is no need for a Boot script.
+
+The BootManager class implements Python's multiprocessing SyncManager class to
 create the shared flab object, using namespaces and queues.
 
 Every flab object must be initialized with queues, which are used to exchange information between separate "flab" process and "ui"
@@ -1148,72 +1077,9 @@ Example: HelloWorldBoot
     
         #3. create a flab object proxy
         f = boot_manager.create_flab_proxy(ui_queue = ui_queue, flab_queue = flab_queue)
-    
-        #convert and run HelloWorldUI
-        f.convert_ui('HelloWorldDesign')
+        
+        # run the UI
         f.load_ui('HelloWorldUi')
         f.uis['HelloWorldUi'].run()
 
-BootManager also contains separate functions for starting processes (start_process and start_processes), which can be used
-to start multiple running processes from the boot script. This is illustrated in the Console Project, below.
 
-## The Console Project
-
-The Console Project is essentially a user input console that allows you to access the flab object and run tasks in real time.
-This is extremely useful for quickly prototyping code, as you do not need to restart python each time you need to modify a task.
-Instead, you can simply change a task, save the file, "reload" the task in flab, and start it.
-
-The Console takes only flab commands as inputs. For example
-
-    flab.start_task('HelloWorld')
-
-becomes
-    
-    >start_task('Hello World')
-
-the display method can be used to print out data in the console. For example
-
-    >display('Hello World')
-
-displays
-
-    'Hello World'
-
-If you wish to print out attributes, for example, the items in a flab dictionary or a flab variable, you need to use
-
-    >display(flab.attribute)
-
-for example
-
-    >display(flab)
-
-outputs
-
-    <flab.Flab.Flab object at 0x7fafde453fa0>
-
-and
-
-    >display(flab.tasks)
-
-outputs
-
-    {'ConsoleUiProcess': <Projects.Console.Tasks.ConsoleUiProcess.Task object at 0x7f88dbd68ac0>,
-    'ConsoleFlabProcess': <Projects.Console.Tasks.ConsoleFlabProcess.Task object at 0x7f88dbd68c10>, 
-    'HelloWorld': <Projects.Console.Tasks.HelloWorld.Task object at 0x7f88dbd5f850>}
-
-## Quick Start
-
-To quickly get started with flab using Console:
-
-1. Install the FLab package
-2. Create a Projects directory
-3. Download the Console Project from github, and copy it into your Projects folder.
-4. Run ConsoleBoot.py from the Boot folder
-5. Type in start_task('HelloWorld'). You should see repeated lines of 'Hello World' printed
-6. Type in stop_task('HelloWorld'). The printing should stop.
-
-#The Console2 Project
-Console2 is an expansion of Console, and contains buttons for easy access to flab methods, and text browsers that display
-the properties of devices, variables and running tasks.
-
-More documentation on the use of Console2 will be uploaded soon.

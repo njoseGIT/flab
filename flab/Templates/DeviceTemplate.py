@@ -1,39 +1,32 @@
+# Flab 3
 # DeviceTemplate.py
-# A template class for devices
-# Version 2.0.3
 # Distributed under GNU GPL v3
 # Author: Nicholas Jose
 
 """
-DeviceTemplate contains default methods for accessing device properties
-
-Version 2.0.3
+DeviceTemplate contains a template Device class,
+which should be inherited by user Device classes to function properly
 """
 
-from flab.Templates import DriverTemplate
-from flab.Templates import ProtocolTemplate
 import inspect
 
-class Device(DriverTemplate.Driver, ProtocolTemplate.Protocol):
+class Device():
+    """
+    Device description needed
+    """
 
-    version = '2.0.3'
+    device_name = 'DeviceTemplate' #Mandatory attribute. This must match the name of the .py file
 
     def __init__(self):
-        """
-        constructor
-        """
-
-        self.device_name = 'DeviceTemplate'
-        self.protocol_name = 'ProtocolTemplate'
-        self.driver_name = 'DriverTemplate'
+        pass
 
     def get(self, attribute_name):
-        """Returns the value of an attribute by its name
+        """
+        Returns the value of a Device attribute
 
-        :param attribute_name: name of the attribute
-        :type attribute_name: string
+        :param attribute_name: str
 
-        :returns: object
+        :returns: device attribute
         """
         return self.__getattribute__(attribute_name)
 
@@ -41,10 +34,7 @@ class Device(DriverTemplate.Driver, ProtocolTemplate.Protocol):
         """
         Sets the value of a Device attribute
 
-        :param attribute_name: name of the attribute
-        :type attribute_name: string
-
-        :param value: new value of the attribute
+        :param attribute_name: str
 
         :returns: None
         """
@@ -54,58 +44,66 @@ class Device(DriverTemplate.Driver, ProtocolTemplate.Protocol):
         """
         Returns the name of a Device
 
-        :returns: name of the device (string)
+        :returns: device name
+        :rtype: str
         """
         return self.device_name
 
     def set_device_name(self, device_name):
         """
-        Sets the name of a device
+        Sets the name of a Device
 
-        :param device_name: the device name
-        :type device_name: string
-
+        :param device_name: str
         :returns: None
         """
         self.device_name = device_name
 
     def get_flab(self):
         """
-        returns the flab object of a Device
+        Returns the flab object of a device
 
-        :returns: flab object (Flab)
+        :returns: flab
+        :rtype: Flab
         """
         return self.flab
 
     def set_flab(self, flab):
         """
-        sets the flab object of a Device
+        Sets the flab object of a Device
 
-        :param flab: a flab object
-        :type flab: Flab
-
+        :param flab: Flab
         :returns: None
         """
         self.flab = flab
 
-    def list_attributes(self):
+    def list_attributes(self) -> list:
         """
-        Returns the attributes of a Device in a list
+        Returns the attributes of a Device in a list.
 
-        :returns: None
+        :returns: the list of device attributes
+        :rtype: list
         """
-        variables = []
-        for i in inspect.getmembers(self):
-            if not inspect.ismethod(i[1]) and not inspect.ismethoddescriptor(i[1]) and not inspect.isbuiltin(i[1]) and not '__' in i[0]:
-                variables.append(i[0])
-        return variables
+        attributes = []
+        try:
+            for i in inspect.getmembers(self):
+                if not inspect.ismethod(i[1]) and not inspect.ismethoddescriptor(i[1]) and not inspect.isbuiltin(i[1]) and not '__' in i[0]:
+                    attributes.append(i[0])
+
+        except Exception as e:
+            self.flab.display('Error in listing ' + self.device_name + ' attributes')
+            self.flab.display(e)
+
+        finally:
+            return attributes
 
     def list_methods(self):
         """
-        returns the methods of a Device in a list
+        Returns the methods of a Device in a list.
 
-        :returns: list of strings
+        :returns: the list of device methods
+        :rtype: list
         """
+
         variables = []
         for i in inspect.getmembers(self):
             if inspect.ismethod(i[1]) and not inspect.ismethoddescriptor(i[1]) and not inspect.isbuiltin(i[1]) and not '__' in i[0]:
@@ -114,12 +112,12 @@ class Device(DriverTemplate.Driver, ProtocolTemplate.Protocol):
 
     def list_method_args(self,method_name):
         """
-        returns the arguments of a method of a Device in a list
+        Returns the arguments of a method of a Device in a list
 
-        :param method_name: name of a method
-        :type method_name: string
+        :param method_name: str
 
-        :returns: list of strings
+        :returns: method arguments
+        :rtype: list
         """
         fullargspec = inspect.getfullargspec(self.get(method_name))
         return fullargspec
