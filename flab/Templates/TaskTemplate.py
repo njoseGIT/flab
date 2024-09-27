@@ -8,6 +8,7 @@ TaskTemplate contains a template Task class,
 which should be inherited by user Task classes to function properly
 """
 
+import inspect
 
 class Task():
     """
@@ -16,6 +17,7 @@ class Task():
 
     task_name = 'TaskTemplate' #Mandatory attribute. This must match the name of the .py file
     task_type = 'thread' #Mandatory attribute. This must be "thread", "asyncio" or "process"
+    info = {}
 
     def __init__(self):
         self.task_stopped = False
@@ -66,3 +68,15 @@ class Task():
 
     def display(self, s):
         self.flab.display(s)
+
+    def get_info(self):
+        return self.info
+
+    def get_run_arguments(self):
+        return inspect.getfullargspec(self.run)
+
+    def get_stop_arguments(self):
+        return inspect.getfullargspec(self.stop)
+
+
+

@@ -62,7 +62,8 @@ class DeviceManager:
             device = glob.glob(cwd + '/Devices/*.py')
             device_names = []
             for d in device:
-                device_names.append(d[len(cwd + '/Devices/'):].replace('.py', ''))
+                if not '__init__.py' in d:
+                    device_names.append(d[len(cwd + '/Devices/'):].replace('.py', ''))
             self.load_devices(sorted(device_names))
         except Exception as e:
             self.display(e)

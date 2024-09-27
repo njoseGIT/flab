@@ -4,6 +4,8 @@
 # Author: Nicholas Jose
 
 from flab.Templates import TaskTemplate
+import os
+import glob
 
 class DataManager():
 
@@ -53,7 +55,14 @@ class DataManager():
         :returns: None
         """
         try:
-            self.load_all_objects('/Data/', 'data', 'data', 'Data')
+            cwd = os.getcwd()
+            data = glob.glob(cwd + '/Data/*.py')
+            data_names = []
+            for d in data:
+                if not '__init__.py' in d:
+                    data_names.append(d[len(cwd + '/Data/'):].replace('.py', ''))
+            self.load_data_list(sorted(data_names))
+
         except Exception as e:
             self.display(e)
             self.display('Error in loading all data')

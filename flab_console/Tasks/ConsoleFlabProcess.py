@@ -1,10 +1,8 @@
-#Console2FlabProcess.py
-#A task for running flab in Console 2
-#Distributed under GNU GPL v3
-#Nicholas A. Jose
-#Feb 2022
+#A class for running the main flab process
+import sys
+from flab.Templates import TaskTemplate
 
-class Task():
+class Task(TaskTemplate.Task):
     task_name = 'ConsoleFlabProcess'
     task_type = 'process'
 
@@ -20,7 +18,7 @@ class Task():
             while self.flab.is_running:
                 command = self.in_queue.get(block=True)
                 try:
-                    if command == 'close':
+                    if command == 'close' or command == 'exit':
                         self.flab.is_running = False
                     elif command != '':
                         if command[0:6] == 'start ':

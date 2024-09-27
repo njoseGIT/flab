@@ -4,6 +4,8 @@
 # Author: Nicholas Jose
 
 from flab.Templates import TaskTemplate
+import os
+import glob
 
 class ModelManager():
 
@@ -53,7 +55,14 @@ class ModelManager():
         :returns: None
         """
         try:
-            self.load_all_objects('/Models/', 'model', 'models', 'Model')
+            cwd = os.getcwd()
+            models = glob.glob(cwd + '/Models/*.py')
+            model_names = []
+            for m in models:
+                if not '__init__.py' in m:
+                    model_names.append(m[len(cwd + '/Models/'):].replace('.py', ''))
+            self.load_models(sorted(model_names))
+
         except Exception as e:
             self.display(e)
             self.display('Error in loading all models')

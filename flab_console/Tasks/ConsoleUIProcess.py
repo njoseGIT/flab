@@ -1,30 +1,29 @@
-#Console2UIProcess.py
-#A task for running Console 2's UI
-#Distributed under GNU GPL v3
-#Nicholas A. Jose
-#Feb 2022
-
-from UIs.Windows import Console2Window
+from flab_console.UIs import ConsoleUI
 from PyQt5 import QtWidgets
 import sys
 
-class Task():
-    task_name = 'Console2UIProcess'
+from flab.Templates import TaskTemplate
+
+class Task(TaskTemplate.Task):
+    task_name = 'ConsoleUIProcess'
     task_type = 'process'
     queues = ()
+    proxies = ()
     pipes = ()
 
     def __init__(self, flab):
         self.flab = flab
 
     #method called when process is running
-    def run(self, flab, ui_queue, flab_queue):
+    def run(self, flab, ui_queue, flab_queue, project_path = ''):
+
         try:
             self.flab = flab
             self.ui_queue = ui_queue
             self.flab_queue = flab_queue
             app = QtWidgets.QApplication(sys.argv)
-            ui = Console2Window.GUI(flab, self.ui_queue, self.flab_queue)
+            #print('project_path= ' + str(project_path))
+            ui = ConsoleUI.GUI(flab, self.ui_queue, self.flab_queue, project_path = project_path)
             ui.run()
             ui.list_loaded_tasks()
             app.exec_()
@@ -32,3 +31,7 @@ class Task():
         except Exception as e:
             self.flab.display('Error in ConsoleUI')
             self.flab.display(e)
+
+
+
+

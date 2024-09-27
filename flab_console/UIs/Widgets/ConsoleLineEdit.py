@@ -1,9 +1,3 @@
-#ConsoleLineEdit.py
-#A custom line edit widget class for Console 2
-#Distributed under GNU GPL v3
-#Nicholas A. Jose
-#Feb 2022
-
 from PyQt5 import QtWidgets
 
 class LineEdit(QtWidgets.QLineEdit):

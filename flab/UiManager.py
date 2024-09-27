@@ -71,7 +71,8 @@ class UiManager:
             uis = glob.glob('UIs/*.py')
             ui_names = []
             for g in uis:
-                ui_names.append(g[4:].replace('.py', ''))
+                if not '__init__.py' in g:
+                    ui_names.append(g[4:].replace('.py', ''))
             self.load_uis(ui_names)
 
         except Exception as e:
@@ -125,7 +126,7 @@ class UiManager:
         finally:
             pass
 
-    def start_ui(self, ui_name):
+    def start_ui(self, ui_name, *args, **kwargs):
         """
         Starts a UI
 
@@ -138,7 +139,7 @@ class UiManager:
                 ui_task = UiTask(ui_name)
                 ui_task.set_flab(self)
                 self.tasks.update({'UiTask_' + ui_name: ui_task})
-            self.start_task('UiTask_' + ui_name)
+            self.start_task('UiTask_' + ui_name, *args, **kwargs)
 
         except Exception as e:
             self.display('Error in starting UI: ' + ui_name)
@@ -146,6 +147,7 @@ class UiManager:
 
         finally:
             pass
+
 
     def stop_ui(self, ui_name):
         """
@@ -205,13 +207,13 @@ class UiTask(TaskTemplate.Task):
         self.task_name = self.task_name + '_' + ui_name
         self.ui_name = ui_name
 
-    def run(self):
+    def run(self, *args, **kwargs):
         """
         starts the ui
         """
         try:
             run_method = self.flab.uis[self.ui_name].get('run')
-            run_method()
+            run_method(*args, **kwargs)
 
         except Exception as e:
             self.flab.display('Error in running ui - ' + self.ui_name)

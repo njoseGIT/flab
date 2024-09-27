@@ -16,6 +16,9 @@ class Device():
     """
 
     device_name = 'DeviceTemplate' #Mandatory attribute. This must match the name of the .py file
+    info = {
+        'configuration':{}
+    }
 
     def __init__(self):
         pass
@@ -121,3 +124,13 @@ class Device():
         """
         fullargspec = inspect.getfullargspec(self.get(method_name))
         return fullargspec
+
+    def get_info(self):
+        return self.info
+
+    def test_method(self, method_name, parameters):
+        try:
+            method = self.get(method_name)
+            method(**parameters)
+        except Exception as e:
+            self.flab.display(f'Error in testing device method {self.device_name}.{method_name}({parameters}): {e}')

@@ -31,7 +31,7 @@ class TaskManager:
     def __init__(self):
         pass
 
-    def load_task(self, task_name) -> None:
+    def load_task(self, task_name, file_path = '') -> None:
         """
         Loads a single task object into flab. The task name is given by the filename, without the '.py' at the end
 
@@ -41,7 +41,7 @@ class TaskManager:
         :returns: None
         """
         try:
-            self.load_object(task_name,'.Tasks.', 'task', 'tasks', 'Task')
+            self.load_object(task_name,'.Tasks.', 'task', 'tasks', 'Task', file_path = file_path)
 
         except Exception as e:
             self.display('Error in loading ' + task_name)
@@ -81,7 +81,8 @@ class TaskManager:
             tasks = glob.glob(cwd + '/Tasks/*.py')
             task_names = []
             for t in tasks:
-                task_names.append(t[len(cwd + '/Tasks/'):].replace('.py', ''))
+                if not '__init__.py' in t:
+                    task_names.append(t[len(cwd + '/Tasks/'):].replace('.py', ''))
             self.load_tasks(sorted(task_names))
 
         except Exception as e:
@@ -136,7 +137,7 @@ class TaskManager:
         finally:
             return reload_error
 
-    def start_task(self, task_name, *args, **kwargs) -> None:
+    def start_task(self, task_name, *args, blocking = False, **kwargs) -> None:
         """
         Start a task using the "run" method, using the task attribute task_type to determine how to start it.
 
@@ -153,11 +154,11 @@ class TaskManager:
             task = self.tasks[task_name]
             task_type = task.get('task_type')
             if task_type == 'thread':
-                self.start_thread(task_name, *args, **kwargs)
+                self.start_thread(task_name, *args, block = blocking, **kwargs)
             elif task_type == 'asyncio':
-                self.start_asyncio_task(task_name, *args, **kwargs)
+                self.start_asyncio_task(task_name, *args, block = blocking, **kwargs)
             elif task_type == 'process':
-                self.start_process(task_name, *args, **kwargs)
+                self.start_process(task_name, *args, block = blocking, **kwargs)
             else:
                 self.display(task_name + ' task type ' + task.get('task_type') + ' not recognized')
 
@@ -320,7 +321,7 @@ class TaskManager:
         finally:
             pass
 
-    def start_thread(self, task_name, *args, **kwargs) -> None:
+    def start_thread(self, task_name, *args, block=False, prefix='', **kwargs) -> None:
         """
         Start a thread with the run method, with input arguments args and kwargs
 
@@ -328,6 +329,9 @@ class TaskManager:
         :type task_name: str
 
         :param args: task arguments
+
+        :param prefix: a prefix to append to the beginning of the task name entry in running_tasks
+        :type prefix: str
 
         :param kwargs: task keyword arguments
 
@@ -337,9 +341,11 @@ class TaskManager:
             task = self.tasks[task_name]
             thr = ThreadTrace('run', task_name, self, target=task.get('run'), args=args, kwargs=kwargs, daemon=True)
             thr.start()
-            thread_name = 'RUN_' + task_name + '_' + str(len(self.task_history))
+            thread_name = prefix + 'RUN_' + task_name + '_' + str(len(self.task_history))
             self.running_tasks.update({thread_name : thr})
             self.task_history.update({thread_name : [time.time(),None,str(len(self.task_history))]})
+            if block:
+                thr.join()
 
         except Exception as e:
             self.display('Error in starting task ' + task_name)
@@ -458,7 +464,7 @@ class TaskManager:
         finally:
             return sorted(running_task_names)
 
-    def start_process(self, task_name, *args, blocking=False, **kwargs) -> None:
+    def start_process(self, task_name, *args, prefix = '', block=False, **kwargs) -> None:
         """
         Start a process with the run method,  with input arguments args and kwargs
 
@@ -467,6 +473,9 @@ class TaskManager:
 
         :param args: args for the task
 
+        :param prefix: a prefix to append to the beginning of the task name entry in running_tasks
+        :type prefix: str
+
         :param blocking: if the task is blocking (False by default)
         :type blocking: boolean
 
@@ -474,13 +483,13 @@ class TaskManager:
         """
         try:
             process_class = self.tasks[task_name]
-            process_task = ProcessTask(process_class)
+            process_task = ProcessTask(process_class, self)
             process = Process(target=process_task.run, args=args, kwargs=kwargs, daemon=True)
             process.start()
-            process_name = 'RUN_' + task_name + '_' + str(len(self.task_history))
+            process_name = prefix + 'RUN_' + task_name + '_' + str(len(self.task_history))
             self.running_tasks.update({process_name: process})
             self.task_history.update({process_name : [time.time(),None,str(len(self.task_history))]})
-            if blocking:
+            if block:
                 process.join()
 
         except Exception as e:
@@ -490,7 +499,7 @@ class TaskManager:
         finally:
             pass
 
-    def start_processes(self, task_names, *args, blocking=False) -> None:
+    def start_processes(self, task_names, *args, block=False) -> None:
         """
         Start multiple processes at once.
 
@@ -516,7 +525,7 @@ class TaskManager:
                 index = index + 1
             for p in processes:
                 processes[p].join()
-            if blocking:
+            if block:
                 for p in processes:
                     processes[p].join()
 
@@ -527,7 +536,7 @@ class TaskManager:
         finally:
             pass
 
-    def stop_process(self, task_name, *args, blocking=True) -> None:
+    def stop_process(self, task_name, *args, block=True) -> None:
         """
         stop a process by calling the stop method of the process as another process.
         Since Flab 3.0 this method does not kill a process
@@ -550,7 +559,7 @@ class TaskManager:
             self.running_tasks.update({process_name: process})
             self.task_history.update({process_name : [time.time(),None,str(len(self.task_history))]})
 
-            if blocking:
+            if block:
                 process.join()
         except Exception as e:
             self.display('Error in stopping process ' + task_name)
@@ -627,12 +636,15 @@ class TaskManager:
             return is_running
 
 
-    def start_asyncio_task(self, task_name, *args, **kwargs) -> None:
+    def start_asyncio_task(self, task_name, *args, block = False, prefix = '', **kwargs) -> None:
         """
         Start an asyncio task by adding it to the asyncio loop as a coroutine
 
         :param task_name: name of the task
         :type task_name: str
+
+        :param prefix: a prefix to append to the beginning of the task name entry in running_tasks
+        :type prefix: str
 
         :param args: task arguments
         :param kwargs: task keyword arguments
@@ -641,8 +653,8 @@ class TaskManager:
         """
         try:
             coroutine_trace = CoroutineTrace('run',task_name, self, self.loop)
-            coroutine_trace.start(*args, **kwargs)
-            coroutine_name = 'RUN_' + task_name + '_' + str(len(self.task_history))
+            coroutine_trace.start(*args,blocking=block,**kwargs)
+            coroutine_name = prefix + 'RUN_' + task_name + '_' + str(len(self.task_history))
             self.running_tasks.update({coroutine_name : coroutine_trace})
             self.task_history.update({coroutine_name : [time.time(),None,str(len(self.task_history))]})
         except Exception as e:
@@ -651,10 +663,11 @@ class TaskManager:
         finally:
              pass
 
-    def stop_asyncio_task(self, task_name, *args, **kwargs) -> None:
+    def stop_asyncio_task(self, task_name, *args, block = False, **kwargs) -> None:
         """
         Stop an asyncio task by running the stop method.
         Since Flab 3.0 this does not kill a running asyncio thread.
+        Need to add blocking
 
         :param task_name: name of the task
         :type task_name: str
@@ -667,7 +680,7 @@ class TaskManager:
         """
         try:
             coroutine_trace = CoroutineTrace('stop',task_name, self, self.loop)
-            coroutine_trace.start(*args, **kwargs)
+            coroutine_trace.start(*args, blocking=block,**kwargs)
             coroutine_name = 'STOP_' + task_name + '_' + str(len(self.task_history))
             self.running_tasks.update({coroutine_name : coroutine_trace})
             self.task_history.update({coroutine_name : [time.time(),None,str(len(self.task_history))]})
@@ -781,9 +794,10 @@ class TaskManager:
         task = ScheduleTask(self)
         self.tasks.update({'ScheduleTask':task})
 
-    def schedule_task(self, start_time, task_name, *args, **kwargs):
+    def schedule_task(self, start_time, task_name, *args, block = False, **kwargs):
         """
         Schedule a task by adding a ScheduleTask to the asyncio loop as a coroutine
+        Need to add blocking
 
         :param task_name: name of the task
         :type task_name: str
@@ -798,7 +812,7 @@ class TaskManager:
         """
         try:
             coroutine_trace = CoroutineTrace('run','ScheduleTask', self, self.loop)
-            coroutine_trace.start(start_time, task_name, *args, **kwargs)
+            coroutine_trace.start(start_time, task_name, *args, blocking=block,**kwargs)
             coroutine_name = 'SCHEDULE_' + str(task_name) + '_' + str(len(self.task_history))
             self.running_tasks.update({coroutine_name : coroutine_trace})
             self.task_history.update({coroutine_name : [time.time(),None,str(len(self.task_history))]})
@@ -813,11 +827,14 @@ class ProcessTask():
     A class for Processes, which enables embedded activation of virtual environments
     """
 
-    def __init__(self, process_class):
+    def __init__(self, process_class, flab):
         """
         :param process_class: class of the process to be run
         """
         self.process_class = process_class
+        self.flab = flab
+
+
 
     def activate_environment(self, exec_path):
         """
@@ -1037,6 +1054,7 @@ class ScheduleTask(TaskTemplate.Task):
 class CoroutineTrace():
     '''
     A class for "killable" coroutines
+    Need to add blocking
     '''
 
     def __init__(self, task_method, task_name, flab, loop):
@@ -1066,7 +1084,7 @@ class CoroutineTrace():
         self.future = None
         self.loop = loop
 
-    def start(self, *args, **kwargs) -> None:
+    def start(self, *args, blocking=False, **kwargs) -> None:
         '''
         starts the coroutine
 
@@ -1079,6 +1097,8 @@ class CoroutineTrace():
         try:
             coroutine_run = self.flab.tasks[self.task_name].get(self.task_method)
             self.future = asyncio.run_coroutine_threadsafe(coroutine_run(*args,**kwargs),self.loop)
+            if blocking:
+                return self.future.result()
         except Exception as e:
             self.flab.display('Error in starting ' + str.upper(self.task_method) + '_' + self.task_name)
             self.flab.display(str(e))
@@ -1112,7 +1132,5 @@ class CoroutineTrace():
             alive = not self.future.done()
         except Exception as e:
             alive = False
-            #self.flab.display('Error in checking if coroutine ' + self.task_name + ' is alive')
-            #self.flab.display(str(e))
         finally:
             return alive

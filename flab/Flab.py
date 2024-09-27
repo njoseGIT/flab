@@ -23,6 +23,23 @@ class FlabObjectManager(SyncManager):
     """
     pass
 
+def flab_function(flab):
+    """
+    A decorator function that displays error messages with flab's display function
+
+    :param func: a function
+    :return:
+    """
+    def func_wrapper(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                flab.display(f"An error occurred in '{func.__name__}': {e}")
+                return None
+        return wrapper
+    return func_wrapper
+
 class Flab(DeviceManager.DeviceManager,
            TaskManager.TaskManager,
            UiManager.UiManager,
@@ -111,7 +128,7 @@ class Flab(DeviceManager.DeviceManager,
         finally:
             pass
 
-    def load_object(self, object_name, object_path, object_type, object_type_dict, object_class_name) -> None:
+    def load_object(self, object_name, object_path, object_type, object_type_dict, object_class_name, file_path = '') -> None:
         """
         Generic method for loading objects
 
@@ -133,18 +150,42 @@ class Flab(DeviceManager.DeviceManager,
         load_error = ''
         try:
             #update module
-            module_name = 'Projects.' + os.path.split(os.getcwd())[1] + object_path + object_name
-            object_module = importlib.import_module(module_name)
-            self.modules.update({object_name: object_module})
+            if file_path == '':
+                module_name = 'Projects.' + os.path.split(os.getcwd())[1] + object_path + object_name
+                object_module = importlib.import_module(module_name)
 
-            #create object
-            create_method = getattr(self.flab_object_manager, 'proxy')
-            new_object = eval('create_method(object_module.'+object_class_name+'(),"'+object_class_name+'")')
-            new_object.set_flab(self)
+                self.modules.update({object_name: object_module})
 
-            #dictionary entry
-            eval('self.' + object_type_dict + '.update({object_name: new_object})')
-            self.display("Successfully loaded : " + object_name)
+                # create object
+                create_method = getattr(self.flab_object_manager, 'proxy')
+                object_constructor = getattr(object_module, object_class_name)
+                new_object = create_method(object_constructor(), object_class_name)
+                new_object.set_flab(self)
+
+                # dictionary entry
+                self.__getattribute__(object_type_dict).update({object_name: new_object})
+
+                self.display(f"Successfully loaded {object_name}")
+
+            else:
+                # load module from file path
+                module_name = object_name
+                spec = importlib.util.spec_from_file_location(module_name, file_path)
+                object_module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(object_module)
+                sys.modules[module_name] = object_module
+
+                self.modules.update({object_name: object_module})
+
+                # create object
+                create_method = getattr(self.flab_object_manager, 'proxy')
+                object_constructor = getattr(object_module, object_class_name)
+                new_object = create_method(None, object_class_name, module_name = module_name, file_path = file_path)
+                new_object.set_flab(self)
+
+                # dictionary entry
+                self.__getattribute__(object_type_dict).update({object_name: new_object})
+                self.display(f"Successfully loaded {object_name} from {file_path}")
 
         except Exception as e:
             self.display('Error loading ' + object_type + ' ' + object_name)
@@ -185,7 +226,7 @@ class Flab(DeviceManager.DeviceManager,
         finally:
             return load_error
 
-    def load_all_objects(self, object_path, object_type, object_type_dict, object_class_name) -> None:
+    def load_all_objects(self, object_path, object_type, object_type_dict, object_class_name, project_name = '') -> None:
         """
         load every object present in the current project's object folder
 
@@ -208,8 +249,9 @@ class Flab(DeviceManager.DeviceManager,
             objects = glob.glob(cwd + object_path + '*.py')
             object_names = []
             for o in objects:
-                object_names.append(o[len(cwd + object_path):].replace('.py', ''))
-            self.load_objects(sorted(object_names),object_path.replace('/','.'), object_type, object_type_dict, object_class_name)
+                if not '__init__.py' in o:
+                    object_names.append(o[len(cwd + object_path):].replace('.py', ''))
+            self.load_objects(sorted(object_names),object_path.replace('/','.'), object_type, object_type_dict, object_class_name, project_name = project_name)
         except Exception as e:
             self.display('Error in loading all ' + object_type_dict)
             self.display(e)
@@ -238,7 +280,8 @@ class Flab(DeviceManager.DeviceManager,
 
             # create new object
             create_method = getattr(self.flab_object_manager, 'proxy')
-            new_object = eval('create_method(object_module.'+object_class_name+'(),"'+object_class_name+'")')
+            object_constructor = getattr(object_module, object_class_name)
+            new_object = create_method(object_constructor(),object_class_name)
             new_object.set_flab(self)
 
             # dictionary entry
@@ -278,9 +321,10 @@ class Flab(DeviceManager.DeviceManager,
         finally:
             pass
 
-    def display(self, object) -> None:
+    def display(self, object, output_list = None, output_label = None) -> None:
         """
         Displays an object by printing it out via the terminal/command prompt and/or passing to ui_queue
+        Can also pass the information to an output list variable or an output label variable
 
         :param object: an object
 
@@ -289,15 +333,31 @@ class Flab(DeviceManager.DeviceManager,
         try:
             if self.print_status:
                 print(object)
+
             if self.ui_queue is not None:
-                self.ui_queue.put(object)
+                self.ui_queue.put(str(object))
+            else:
+                print(object)
+
+            if output_list is not None:
+                if output_list in self.vars:
+                    self.vars[output_list] = self.vars[output_list] + [str(object)]
+                else:
+                    self.display(f'{output_list} not in flab.vars')
+
+            if output_label is not None:
+                if output_label in self.vars:
+                    self.vars[output_label] = str(object)
+                else:
+                    self.display(f'{output_label} not in flab.vars')
+
         except Exception as e:
             if self.print_status:
                 print('Error in Flab.display')
                 print(e)
             if self.ui_queue is not None:
                 self.ui_queue.put('Error in Flab.display')
-                self.ui_queue.put(e)
+                self.ui_queue.put(str(e))
         finally:
             pass
 
@@ -467,10 +527,10 @@ class Flab(DeviceManager.DeviceManager,
         """
         try:
             os.chdir(project_path)
-            cwd = os.getcwd()
-            par1 = os.path.abspath(os.path.join(cwd, '..'))
-            par2 = os.path.abspath(os.path.join(par1, '..'))
-            sys.path.append(par2)
+            #cwd = os.getcwd()
+            #par1 = os.path.abspath(os.path.join(cwd, '..'))
+            #par2 = os.path.abspath(os.path.join(par1, '..'))
+            #sys.path.append(par2)
         except Exception as e:
             self.display('Error in Flab.set_working_directory')
             self.display(e)
@@ -557,13 +617,43 @@ class Flab(DeviceManager.DeviceManager,
         finally:
             return namespace
 
+
+    def set_var(self, variable_name, value):
+        """
+        Programmatically sets the value of the variable
+        :param variable_name: name of the variable
+        :type variable_name: str
+
+        :param value: the value of the variable
+        :type value: any
+        :return:
+        """
+        try:
+            self.vars[variable_name] = value
+        except Exception as e:
+            self.flab.display(f'Error in setting variable value {variable_name}:{value}: {e}')
+
 class Proxy(NamespaceProxy):
 
-    def __new__(cls, alternate_obj, class_name):
-        new_module = importlib.reload(inspect.getmodule(alternate_obj))
-        obj = object.__new__(new_module.__dict__[class_name])
-        obj.__dict__ = alternate_obj.__dict__
-        return obj
+    def __new__(cls, alternate_obj, class_name, module_name = None, file_path = None):
+        try:
+
+            if module_name == None:
+                new_module = importlib.reload(inspect.getmodule(alternate_obj))
+                obj = object.__new__(new_module.__dict__[class_name])
+                obj.__dict__ = alternate_obj.__dict__
+            else:
+                spec = importlib.util.spec_from_file_location(module_name, file_path)
+                object_module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(object_module)
+                sys.modules[module_name] = object_module
+                obj = object.__new__(object_module.__dict__[class_name])
+                #obj.__dict__ = alternate_obj.__dict__
+
+            return obj
+        except Exception as e:
+            print(f'Error in creating proxy object {alternate_obj}, {class_name}: {e}')
+            return None
 
     def __init__(self):
         pass
@@ -610,3 +700,4 @@ class FlabNamespace:
         self.device_methods = {}
         self.device_method_args = {}
         self.device_method_arg_descriptions = {}
+
