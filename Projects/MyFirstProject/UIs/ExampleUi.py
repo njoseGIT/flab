@@ -1,4 +1,4 @@
-from flab3.Templates import UiTemplate
+from flab.Templates import UiTemplate
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 

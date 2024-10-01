@@ -1,4 +1,4 @@
-from flab3.Templates import TaskTemplate
+from flab.Templates import TaskTemplate
 
 class Task(TaskTemplate.Task):
 

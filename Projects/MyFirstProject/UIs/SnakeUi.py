@@ -1,6 +1,6 @@
 import turtle
 import random
-from flab3.Templates import UiTemplate
+from flab.Templates import UiTemplate
 
 class Ui(UiTemplate.Ui):
 

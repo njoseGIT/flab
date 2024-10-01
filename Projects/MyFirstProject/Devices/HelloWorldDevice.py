@@ -1,4 +1,4 @@
-from flab3.Templates import DeviceTemplate
+from flab.Templates import DeviceTemplate
 
 class Device(DeviceTemplate.Device):
     device_name = "HelloWorldDevice"  # Name of the HelloWorldDevice

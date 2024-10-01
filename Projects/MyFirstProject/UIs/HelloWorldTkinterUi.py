@@ -1,5 +1,5 @@
 import tkinter as tk
-from flab3.Templates import UiTemplate
+from flab.Templates import UiTemplate
 
 class Ui(UiTemplate.Ui):
 

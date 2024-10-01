@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 
-class UI_MainWindow
+class UI_MainWindow():
     window = QWidget()
     window.setWindowTitle('Hello, World!')
     helloMsg = QLabel('Hello, World!', parent=window)

@@ -4,4 +4,4 @@
 /.idea
 /flab/__pycache__/*
 .gitattributes
-.pycache/
+.pycache

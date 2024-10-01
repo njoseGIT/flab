@@ -3,7 +3,7 @@
 # Distributed under GNU GPL v3
 # Nicholas A. Jose
 
-from flab3.Templates import DataTemplate
+from flab.Templates import DataTemplate
 import os
 import pandas
 

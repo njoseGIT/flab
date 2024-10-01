@@ -3,7 +3,7 @@
 # Distributed under GNU GPL v3
 # Nicholas A. Jose
 
-from flab3.Templates import ModelTemplate
+from flab.Templates import ModelTemplate
 import tensorflow as tf
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.datasets import fetch_california_housing

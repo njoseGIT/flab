@@ -2,7 +2,7 @@
 import time
 
 #Import the task template from flab.Templates
-from flab3.Templates import TaskTemplate
+from flab.Templates import TaskTemplate
 
 #Create the Task class, inheriting TaskTemplate.Task
 class Task(TaskTemplate.Task):

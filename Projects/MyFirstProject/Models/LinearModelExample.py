@@ -3,7 +3,7 @@
 # Distributed under GNU GPL v3
 # Nicholas A. Jose
 
-from flab3.Templates import ModelTemplate
+from flab.Templates import ModelTemplate
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import cross_val_predict
 from sklearn.linear_model import LinearRegression

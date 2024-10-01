@@ -1,4 +1,4 @@
-from flab3.Templates import UiTemplate
+from flab.Templates import UiTemplate
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 
