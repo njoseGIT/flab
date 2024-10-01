@@ -9,7 +9,6 @@ import inspect
 import sys
 import time
 import datetime
-from pyqtspinner import WaitingSpinner
 
 class Actions():
 
@@ -189,49 +188,38 @@ class Actions():
         par1 = os.path.abspath(os.path.join(cwd, '..'))
         par2 = os.path.abspath(os.path.join(par1, '..'))
         sys.path.append(par2)
-        #self.display_loading_message('Starting FLAB3')
         self.send_flab_command('set_working_directory("' + project_path + '")')
         if new:
             self.send_flab_command('register_proxy()')
             self.send_flab_command('start_object_manager()')
-        #self.display_loading_message('Loading... \n Devices')
         self.MainWindow.setWindowTitle('Flab 3.0:' + os.path.basename(project_path))
-        #self.message('Loading objects')
         self.flab.load_all_tasks_completed = False
         self.flab.load_all_devices_completed = False
         self.send_flab_command('load_all_devices()')
         while not self.flab.load_all_devices_completed:
             self.console_sleep(1)
         self.flab.load_all_data_completed = False
-        #self.display_loading_message('Loading... \n Data')
         self.send_flab_command('load_all_data()')
         while not self.flab.load_all_data_completed:
             self.console_sleep(1)
         self.flab.load_all_uis_completed = False
-        #self.display_loading_message('Loading: UIs')
         self.send_flab_command('load_all_uis()')
         while not self.flab.load_all_uis_completed:
             self.console_sleep(1)
-        #self.display_loading_message('Loading: Models')
         self.send_flab_command('load_all_models()')
         while not self.flab.load_all_models_completed:
             self.console_sleep(1)
-        #self.display_loading_message('Loading: Tasks')
         self.send_flab_command('load_all_tasks()')
         while not self.flab.load_all_tasks_completed:
             self.console_sleep(1)
         self.send_flab_command('start_asyncio_loop()')
-        #self.send_flab_command('load_schedule_task()')
-        #self.send_flab_command('get_environment_info()')
-        #self.send_flab_command('get_installed_packages()')
         self.list_loaded_tasks()
         self.list_loaded_devices()
         self.list_loaded_data()
         self.list_loaded_uis()
         self.list_loaded_models()
         self.send_flab_command('set_project_path("' + str(project_path) + '")')
-        #self.send_flab_command('display(flab.get_environment_info())')
-        #self.loading_message.close()
+
 
 
     def list_objects(self):
@@ -1589,42 +1577,6 @@ class Actions():
             self.textBrowser_flab_console.ensureCursorVisible()
         except Exception as e:
             self.flab.display(e)
-
-    def display_loading_message(self, message):
-        self.loading_message = QtWidgets.QDialog()
-        self.loading_message.setStyleSheet("background-color: white;")  # Semi-transparent black background
-
-        self.loading_message.layout = QtWidgets.QVBoxLayout(self.loading_message)
-        self.loading_message.setWindowFlags(QtCore.Qt.WindowFlags(QtCore.Qt.WindowCloseButtonHint))
-        self.loading_message.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.NoDropShadowWindowHint)
-        #self.loading_message.setAttribute(Qt.WA_TranslucentBackground)
-        self.loading_message.resize(300, 300)
-        self.message_widget = QtWidgets.QLabel(str(message))
-        self.message_widget.setAlignment(Qt.AlignCenter)
-        self.spinner_widget = QtWidgets.QLabel('\n\n\n')
-
-        spinner = WaitingSpinner(self.spinner_widget,
-                                roundness=100.0,
-                                fade=80.0,
-                                radius=15,
-                                lines=20,
-                                line_length=10,
-                                line_width=5,
-                                modality=Qt.ApplicationModal,
-                                center_on_parent=True,
-                                color=QtGui.QColor(255,128,0))
-
-        self.image_label = QtWidgets.QLabel()
-        self.image_label.setAlignment(Qt.AlignCenter)
-        self.flab.display(os.getcwd())
-        pixmap = QtGui.QPixmap(os.getcwd()+r'/UIs/Designs/AMLearn logo.png')
-        self.image_label.setPixmap(pixmap)
-        self.loading_message.layout.addWidget(self.image_label)
-        self.loading_message.layout.addWidget(self.spinner_widget)
-
-        self.loading_message.layout.addWidget(self.message_widget)
-        self.loading_message.show()
-        spinner.start()
 
 
     def message(self, m):

@@ -1,0 +1,7 @@
+*.pyc
+/venv-flab_all
+.DS_store
+/.idea
+/flab/__pycache__/*
+.gitattributes
+.pycache/
