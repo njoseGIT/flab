@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="flab",
-    version="3.0.0",
+    version="3.0.1",
     author="Nicholas A. Jose",
     author_email="nicholas.jose@acceleratedmaterials.co.uk",
     description='A fast, flexible and fun framework for creating automated laboratories',

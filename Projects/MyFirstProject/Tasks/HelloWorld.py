@@ -13,9 +13,6 @@ class Task(TaskTemplate.Task):
     #Define the type of the task. This is either 'thread' , 'process' or 'asyncio'
     task_type = 'thread'
 
-    #Define the descriptions of each argument being entered into the task (optional)
-    argument_descriptions = {'optional_argument': 'an optional argument',
-                             'mandatory_argument': 'a mandatory argument'}
 
     #define the run method, with any necessary and optional arguments (i.e. args, kwargs)
     def run(self, mandatory_argument, optional_argument = 'optional argument'):

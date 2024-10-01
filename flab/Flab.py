@@ -473,8 +473,6 @@ class Flab(DeviceManager.DeviceManager,
 
         └ MyFirstProject/
 
-         ├ Boot/
-
          ├ Tasks/
 
          ├ Devices/
@@ -501,7 +499,6 @@ class Flab(DeviceManager.DeviceManager,
             def add_directory(path, name):
                 os.mkdir(path + '/' + name)
 
-            add_directory(project_dir, 'Boot')
             add_directory(project_dir, 'Devices')
             add_directory(project_dir, 'Tasks')
             add_directory(project_dir, 'UIs')

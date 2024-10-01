@@ -2,14 +2,15 @@
 
 Author: Nicholas A. Jose
 
-For code documentation, go to https://flab.readthedocs.io/en/latest/
+For code documentation, go to https://flab.readthedocs.io/en/latest/.
+This is currently under revision since the release of 3.0.
 
 ## Recent Updates
 1.0.0: Device objects have publicly accessible attributes and methods.
 
 1.0.7: Resolution of bug in booting. Boot script no longer requires changing of directories.
 
-1.1.0: Resolved issues in closing flab and multiprocessing. Requires Python 3.9 or later
+1.1.0: Resolved issues in closing flab and multiprocessing. Requires Python 3.10 or later
 
 1.1.1: Resolved issue in listing tasks
 
@@ -18,23 +19,66 @@ optional arguments. TaskManager no longer implements QThread (as a "QTask") such
 flab is no longer dependent on PyQT. Templates are now included within flab.Templates. These are DeviceTemplate, DriverTemplate
 and ProtocolTemplate, which may be inherited by Device classes.
 
-2.0.1: Resolved bug in distribution
+2.0.1: 
+- Resolved bug in distribution
 
-2.0.2: Docstrings created 
+2.0.2: 
+- Docstrings created 
 
-2.0.3: Docstrings amended
+2.0.3: 
+- Docstrings amended
 
-2.0.4/2.0.5: Setup file amended
+2.0.4/2.0.5: 
+- Setup file amended
 
-2.0.6/7: Resolved bug in Flab inheritance
+2.0.6/7: 
+- Resolved bug in Flab inheritance
 
 3.0.0: 
--Resolved issues in reloading of devices. 
--Added ModelManager, DataManager and EnvironmentManager.
--Added ModelTemplate and DataTemplate
--Removal of Driver/Protocol inheritance in Devices for simplicity
--Shared classes (Task, Device, etc.) init methods not required anymore
+ - Resolved issues in reloading of devices. 
+ - Added ModelManager, DataManager and EnvironmentManager.
+ - Added ModelTemplate and DataTemplate
+ - Removal of Driver/Protocol inheritance in Devices for simplicity
+ - Shared classes (Task, Device, etc.) init methods not required anymore
 
+3.0.1: 
+ - Bug fixes in object loading and console actions
+ - Updated documentation
+ - Added Devices:
+   - AgilentLC
+   - ArduinoMegaDevice
+   - AvantesDevice
+   - BronkhorstDevice   
+   - HarvardPump33DDS
+   - IkaRCTDigital
+   - KnauerPump
+   - SerialDevice
+   - ShimadzuLC
+   - UsbcamDevice
+    
+ - Added Tasks
+   - IkaRCTDigital_Connect.py
+   - IkaRCTDigital_Disconnect.py
+   - IkaRCTDigital_Initialize.py
+   - IkaRCTDigital_SetStirringSpeed.py
+   - IkaRCTDigital_SetTemperature.py
+   - IkaRCTDigital_StartStirring.py
+   - IkaRCTDigital_StopStirring.py
+   - KnauerPump_Connect.py
+   - KnauerPump_Disconnect.py
+   - KnauerPump_DoseVolume.py
+   - KnauerPump_Initialize.py
+   - KnauerPump_ReadFlowrateSetpoint.py
+   - KnauerPump_SetFlowrate.py
+   - KnauerPump_StartPumping.py
+   - KnauerPump_StartTimedPump.py
+   - KnauerPump_StopPumping.py
+   - HarvardPump33DDS_Connect.py
+   - HarvardPump33DDS_Disconnect.py
+   - HarvardPump33DDS_Initialize.py
+   - HarvardPump33DDS_StartInfusing.py
+   - HarvardPump33DDS_StopPumping.py
+    
 ## Summary
 
 Flab was created to be a fast, flexible and fun framework for creating automated chemical laboratories. As a coding
@@ -113,14 +157,16 @@ outputs
 
 To quickly get started with flab using Console:
 
-1. Install flab using pip
-2. Install flab-console using pip
-3. Create a Projects directory
-4. Create the following script and run:
-
-
-    from flab-console.Boot import Console
-    Console.boot()
+1. Clone the flab repository on Github
+2. create a virtual environment and install the following dependencies, which are also given in flab_console_requirements.txt.
+- setuptools==65.5.0
+- pip==22.3.1
+- PyQt5-sip==12.15.0
+- PyQt5-Qt5==5.15.15
+- PyQt5==5.15.11
+- numpy==2.1.1
+- wheel==0.43.0 
+- pyqtgraph==0.12.3
 
 ## Directory structure
 Before beginning any project with Flab, the working directory must be set up properly.
@@ -142,8 +188,6 @@ A project directory has the following structure:
 
     example_project/
     
-    ├ Boot/
-    
     ├ Tasks/
 
     ├ Devices/
@@ -153,7 +197,6 @@ A project directory has the following structure:
     ├ Models/
 
     └ Data/
-
 
 A project directory may be automatically created using flab's create_project_directory() method
 
@@ -177,8 +220,6 @@ Tasks are essentially routines or programs, which can be run in a variety of fas
 are saved as python files with the Tasks folder of a project.
 
 To run a Task in Flab Console, each Task should inherit the TaskTemplate. This is provided in the Templates module.
-
-
 
 Each task requires two attributes:
 
@@ -215,65 +256,62 @@ Threaded Task Example:
 
     #Import the required libraries
     import time
-    
+
     #Import the task template from flab.Templates
     from flab.Templates import TaskTemplate
-    
+
     #Create the Task class, inheriting TaskTemplate.Task
     class Task(TaskTemplate.Task):
-    
-        #Define the name of the task. This should match the filename
-        task_name = 'HelloWorld'
-    
-        #Define the type of the task. This is either 'thread' , 'process' or 'asyncio'
-        task_type = 'thread'
-    
-        #Define the descriptions of each argument being entered into the task (optional)
-        argument_descriptions = {'optional_argument': 'an optional argument',
-                                 'mandatory_argument': 'a mandatory argument'}
-    
-        #define the run method, with any necessary and optional arguments (i.e. args, kwargs)
-        def run(self, mandatory_argument, optional_argument = 'optional argument'):
-            try:
-    
-                #print out Hello World + the mandatory argument in the system command line/terminal
-                print('1. Hello World: ' + str(mandatory_argument))
-    
-                #display Hello World + the mandatory argument in the console command line
-                self.flab.display('2. Hello World: ' + str(mandatory_argument) + ' ' + str(optional_argument))
-    
-                #create a shared variable called 'World' with the value 'Hello'
-                self.flab.add_var('Hello', 'World')
-    
-                #display the shared variable called 'World' in the console command line
-                self.flab.vars['count'] = 0
-                self.flab.display('3. ' + str(self.flab.vars['count']))
-    
-                #create a shared variable called 'HelloWorld_stopped' with the value False
-                self.flab.vars['HelloWorld_stopped'] = False
-    
-                #while the variable 'HelloWorld_stopped' is False, loop over a section of code
-                while not self.flab.vars['HelloWorld_stopped']:
-                    #display 'Hello World' + mandatory argument in the console
-                    self.flab.display('4. Hello World: ' + str(mandatory_argument))
-                    #sleep for a second
-                    time.sleep(1)
-            except Exception as e:
-                self.flab.display('Error in HelloWorld')
-                self.flab.display(e)
-            finally:
-                pass
-    
-        #define the method to be called when the task is stopped
-        def stop(self):
-            #set the variable 'HelloWorld_stopped' to True
-            self.flab.vars['HelloWorld_stopped'] = True #a flag to stop the script
+
+    #Define the name of the task. This should match the filename
+    task_name = 'HelloWorld'
+
+    #Define the type of the task. This is either 'thread' , 'process' or 'asyncio'
+    task_type = 'thread'
+
+
+    #define the run method, with any necessary and optional arguments (i.e. args, kwargs)
+    def run(self, mandatory_argument, optional_argument = 'optional argument'):
+        try:
+
+            #print out Hello World + the mandatory argument in the system command line/terminal
+            print('1. Hello World: ' + str(mandatory_argument))
+
+            #display Hello World + the mandatory argument in the console command line
+            self.flab.display('2. Hello World: ' + str(mandatory_argument) + ' ' + str(optional_argument))
+
+            #create a shared variable called 'World' with the value 'Hello'
+            self.flab.add_var('Hello', 'World')
+
+            #display the shared variable called 'World' in the console command line
+            self.flab.vars['count'] = 0
+            self.flab.display('3. ' + str(self.flab.vars['count']))
+
+            #create a shared variable called 'HelloWorld_stopped' with the value False
+            self.flab.vars['HelloWorld_stopped'] = False
+
+            #while the variable 'HelloWorld_stopped' is False, loop over a section of code
+            while not self.flab.vars['HelloWorld_stopped']:
+                #display 'Hello World' + mandatory argument in the console
+                self.flab.display('4. Hello World: ' + str(mandatory_argument))
+                #sleep for a second
+                time.sleep(1)
+        except Exception as e:
+            self.flab.display('Error in HelloWorld')
+            self.flab.display(e)
+        finally:
+            pass
+
+    #define the method to be called when the task is stopped
+    def stop(self):
+        #set the variable 'HelloWorld_stopped' to True
+        self.flab.vars['HelloWorld_stopped'] = True #a flag to stop the script
 
 ###Asyncio Tasks
 
 An asynchronous task can be used to make running some routines more efficient. This utilizes
 python's asyncio library. Asyncio tasks run in an asyncio loop, which is started by running flab.start_asyncio_loop().
-Flab Console automatically starts the asyncio loop upon startup.
+Flab Console automatically starts the asyncio loop upon startup, which is visible from the "task bar".
 
 An asyncio task has several key differences to a threaded task:
 1. the asyncio library must be imported
@@ -394,76 +432,115 @@ Example: reloading and using device
     flab.reload_device('ExampleDevice')
     flab.devices['ExampleDevice'].set_temperature(50)
 
-To get or change the attributes of a device, one should use the 'get' and 'set' methods.
+To get or change the attributes of a device (or any other shared flab object) outside of the object class itself,
+one should use the 'get' and 'set' methods. Doing this ensures that the correct value is returned - otherwise, the default value 
+may be returned.
 
 Example:
 
+    use:
+
     temperature = flab.devices['ExampleDevice'].get('setpoint_temperature')
     flab.devices['ExampleDevice'.set('setpoint_temperature',5)
+
+    instead of:
+
+    temperature = flab.devices['ExampleDevice'].setpoint_temperature
+    flab.devices['ExampleDevice'].setpoint_temperature = 5)
 
 Some equipment providers or third parties already provide drivers in python, which can be adapted. Below is a Device
 used for collecting data from Arduino Mega controllers using the pyfirmata library. 
 
 Example: ArduinoMegaDevice
     
-    #A class for driving Arduino Mega using the pyfirmata library (https://pypi.org/project/pyFirmata/)
-
     from pyfirmata import Arduino, util, ArduinoMega
     from flab.Templates import DeviceTemplate
-
-    class Device(ArduinoMega, DeviceTemplate.Device):
     
-        port = 'NA'
-        is_arduino_connected = False
-        print_status = True
-        driver_name = 'ArduinoMegaDriver'
-        mega = {'digital': tuple(x for x in range(56)),'analog': tuple(x for x in range(16)),'pwm': tuple(x for x in range(2, 14)),'use_ports': True,'disabled': (0, 1, 14, 15)}
-    
-        #set the communication port
-        def set_port(self,port):
-            self.port = port
+    class Device(DeviceTemplate.Device):
+        """
+        A class for driving Arduino Mega using the pyfirmata library (https://pypi.org/project/pyFirmata/)
+        """
 
-        #get the communication port
-        def get_port(self):
-            return self.port
-    
-        #connect the arduino
-        #the port must be defined before connecting the arduino
-        def connect_arduino(self):
-            if (not self.is_arduino_connected) and (self.port != 'NA'):
-                try:
-                    self.ard = Arduino(self.port)
-                    self.ard.setup_layout(self.mega)
-                    self.it = util.Iterator(self.ard)
-                    self.it.start()
-                    self.is_arduino_connected = True
-                    if self.print_status:
-                        self.flab.display('Arduino connected successfully')
-                    return 0
-                except Exception as e:
-                    if self.print_status:
-                        self.flab.display(str(e))
-                        self.flab.display('Error connecting Arduino Mega. Check connection')
-                    return e
-                finally:
-                    pass
-            else:
-                return 0
+    port = 'NA' #arduino serial port [str]
+    is_arduino_connected = False #boolean indicating if the arduino is connected [str]
+    print_status = True #boolean indicating if the status of the arduino should be printed [str]
+    driver_name = 'ArduinoMega' #name of the driver [str]
+    mega = {'digital': tuple(x for x in range(56)),
+            'analog': tuple(x for x in range(16)),
+            'pwm': tuple(x for x in range(2, 14)),
+            'use_ports': True,
+            'disabled': (0, 1, 14, 15)} #properties of the arduino
 
-        #get if arduino is connected
-        def get_arduino_connected(self):
-            return self.is_arduino_connected
+    def set_port(self,port):
+        """
+        Sets the serial port
 
-        #I define this here because pyfirmata does not actually return a voltage when a pin is read - it is a number between
-        #0 to 1
-        def get_voltage(self, pin):
+        :param port: the serial port
+        :type port: str
+        :returns: None
+        """
+        self.port = port
+
+
+    def get_port(self):
+        """
+        Returns the serial port
+
+        :returns: str
+        """
+        return self.port
+
+    def connect_arduino(self):
+        """
+        Initializes communication with the arduino. the serial port must be set.
+
+        :returns: 0 if the arduino connects successfully, exception if it doesn't
+        """
+        if not self.is_arduino_connected and self.port != 'NA':
             try:
-                v = self.ard.analog[pin].read() * 5.0
+                self.ard = Arduino(self.port)
+                self.ard.setup_layout(self.mega)
+                self.it = util.Iterator(self.ard)
+                self.it.start()
+                self.is_arduino_connected = True
+                if self.print_status:
+                    self.flab.display('Arduino connected successfully')
+                return 0
             except Exception as e:
-                v = -1
+                if self.print_status:
+                    self.flab.display(str(e))
+                    self.flab.display('Error connecting Arduino Mega. Check connection')
+                return e
             finally:
                 pass
-            return v
+        else:
+            return 0
+
+    def get_voltage(self, pin):
+        """
+        returns the voltage of an analog pin. If there is an error, the voltage returned is 0.
+
+        :param pin: pin number (between 1 and 16)
+        :type pin: int
+
+        :returns: double
+        """
+        try:
+            v = self.ard.analog[pin].read() * 5.0
+        except Exception as e:
+            v = -1
+        finally:
+            pass
+        return v
+
+    def get_arduino_connected(self):
+        """
+        Checks if the arduino is communicating
+
+        :returns: boolean
+        """
+        return self.is_arduino_connected
+
 
 Sometimes, it is necessary to completely define a device from scratch. For serial communication, python's serial 
 library can be used to create methods for communication. Below is an example of a Device that defines serial communication
@@ -1038,48 +1115,6 @@ Data classes can be loaded nad reloaded like all other objects, for example:
     flab.load('JsonDataExample')
     flab.reload('JsonDataExample')
 
-## Boot
+# MyFirstProject
 
-Boot scripts are advanced scripts used to start programs. If you are using Console, there is no need for a Boot script.
-
-The BootManager class implements Python's multiprocessing SyncManager class to
-create the shared flab object, using namespaces and queues.
-
-Every flab object must be initialized with queues, which are used to exchange information between separate "flab" process and "ui"
-processes. These queues may or may not further used by the programmer, depending on the complexity of the program.
-
-The flab queue stores commands for processes that execute actions within the flab environment (e.g. controlling devices).
-The UI queue stores commands or strings for UI processes to execute or display
-
-Before starting any specific code for your project, use the following steps to create a shared flab object
-
-1. Create a BootManager object
-2. Create a UI queue and a flab queue
-3. Create a shared flab object using boot_manager.create_flab_proxy(ui_queue, flab_queue)
-
-These steps are illustrated in the below example, which starts HelloWorldUI
-
-Note: in V1.0.7+ the working directory does not need to be changed within the bootscript
-
-Example: HelloWorldBoot
-
-    from flab import BootManager
-    import os
-    
-    if __name__ == '__main__':
-
-        #1. create a boot_manager
-        boot_manager = BootManager.BootManager()
-    
-        #2. create the queues
-        ui_queue = boot_manager.create_queue()
-        flab_queue = boot_manager.create_queue()
-    
-        #3. create a flab object proxy
-        f = boot_manager.create_flab_proxy(ui_queue = ui_queue, flab_queue = flab_queue)
-        
-        # run the UI
-        f.load_ui('HelloWorldUi')
-        f.uis['HelloWorldUi'].run()
-
-
+Coming soon!

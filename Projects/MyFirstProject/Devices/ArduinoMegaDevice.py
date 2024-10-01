@@ -1,22 +1,25 @@
 from pyfirmata import Arduino, util, ArduinoMega
 from flab.Templates import DeviceTemplate
 
+
 class Device(DeviceTemplate.Device):
     """
     A class for driving Arduino Mega using the pyfirmata library (https://pypi.org/project/pyFirmata/)
     """
 
-    port = 'NA' #arduino serial port [str]
-    is_arduino_connected = False #boolean indicating if the arduino is connected [str]
-    print_status = True #boolean indicating if the status of the arduino should be printed [str]
-    driver_name = 'ArduinoMega' #name of the driver [str]
+    device_name = 'ArduinoDevice'
+    port = 'NA'  # arduino serial port [str]
+    is_arduino_connected = False  # boolean indicating if the arduino is connected [str]
+    print_status = True  # boolean indicating if the status of the arduino should be printed [str]
+    driver_name = 'ArduinoMega'  # name of the driver [str]
     mega = {'digital': tuple(x for x in range(56)),
             'analog': tuple(x for x in range(16)),
             'pwm': tuple(x for x in range(2, 14)),
             'use_ports': True,
-            'disabled': (0, 1, 14, 15)} #properties of the arduino
+            'disabled': (0, 1, 14, 15)}  # properties of the arduino
 
-    def set_port(self,port):
+
+    def set_port(self, port):
         """
         Sets the serial port
 
@@ -34,6 +37,7 @@ class Device(DeviceTemplate.Device):
         :returns: str
         """
         return self.port
+
 
     def connect_arduino(self):
         """
@@ -61,6 +65,7 @@ class Device(DeviceTemplate.Device):
         else:
             return 0
 
+
     def get_voltage(self, pin):
         """
         returns the voltage of an analog pin. If there is an error, the voltage returned is 0.
@@ -78,6 +83,7 @@ class Device(DeviceTemplate.Device):
             pass
         return v
 
+
     def get_arduino_connected(self):
         """
         Checks if the arduino is communicating
@@ -85,4 +91,3 @@ class Device(DeviceTemplate.Device):
         :returns: boolean
         """
         return self.is_arduino_connected
-

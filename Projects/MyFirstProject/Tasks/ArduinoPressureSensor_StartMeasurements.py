@@ -5,7 +5,7 @@ from flab.Templates import DeviceTemplate
 
 class Task(DeviceTemplate.Device):
 
-    task_name = 'PressureMeasurements'
+    task_name = 'ArduinoPressureSensor_StartMeasurements'
     task_stopped = False
 
     #run the task with a default channel pin of 1
@@ -15,7 +15,7 @@ class Task(DeviceTemplate.Device):
             self.flab.vars['stop_pressure_measurements'] = False
 
             # create a local reference to the device
-            p = self.flab.devices['PressureSensor']
+            p = self.flab.devices['ArduinoPressureSensor']
 
             # set the port
             p.set_port('COM5')

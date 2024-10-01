@@ -1,8 +1,8 @@
-from Projects.ArduinoProject.Devices import ArduinoMegaDriver
+from Projects.ArduinoProject.Devices import ArduinoMegaDevice
 import time
 import numpy as np
 
-class Device(ArduinoMegaDriver.Device):
+class Device(ArduinoMegaDevice.Device):
     """
     A class for getting pressure data using with an ArduinoMega. Upon creating an object, define the analog input pins,
     the voltage multipliers (A) and offsets (B).
@@ -11,7 +11,7 @@ class Device(ArduinoMegaDriver.Device):
     can be defined.
     """
 
-    device_name = 'PressureSensor'
+    device_name = 'ArduinoPressureSensor'
 
     is_sensor_connected = False #if the sensor is connected
     print_status = True #if the status of the pressure sensors should be displayed
