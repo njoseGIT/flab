@@ -1,6 +1,6 @@
 import serial
 from serial.tools import list_ports
-from Projects.AMLearn.Devices import SerialDevice
+from Projects.MyFirstProject.Devices import SerialDevice
 
 class Device(SerialDevice.Device):
     device_name = 'HarvardPump33DDS'

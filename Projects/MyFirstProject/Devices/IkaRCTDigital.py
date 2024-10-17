@@ -1,7 +1,7 @@
 #Nicholas Jose 2022
 #A class for IKA RCT Digital hotplates
 
-from Projects.AMLearn.Devices import SerialDevice
+from Projects.MyFirstProject.Devices import SerialDevice
 from serial.tools import list_ports
 import serial
 

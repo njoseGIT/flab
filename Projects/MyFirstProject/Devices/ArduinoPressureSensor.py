@@ -1,4 +1,4 @@
-from Projects.ArduinoProject.Devices import ArduinoMegaDevice
+from Projects.MyFirstProject.Devices import ArduinoMegaDevice
 import time
 import numpy as np
 
